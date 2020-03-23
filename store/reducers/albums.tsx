@@ -66,8 +66,8 @@ export default (state = initialState, action) => {
             let sortedAlbums = state.albums;
             switch (appliedSorting) {
                 case "date":
-                    sortedAlbums = state.albums.sort((a, b) =>
-                        b.addedAt.localeCompare(a.addedAt)
+                    sortedAlbums = state.albums.sort(
+                        (a, b) => new Date(b.addedAt) - new Date(a.addedAt)
                     );
                     break;
                 case "artist":

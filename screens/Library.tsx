@@ -10,6 +10,7 @@ import * as albumsActions from "../store/actions/albums";
 const LibraryScreen = ({ navigation: { navigate } }) => {
     const colorScheme = useColorScheme();
     const albums = useSelector(state => state.albums.albums);
+    const sorting = useSelector(state => state.albums.sorting);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -36,8 +37,6 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
             deleteRow({}, key);
         }
     };
-
-    console.log("🔥", albums);
 
     return (
         <View
