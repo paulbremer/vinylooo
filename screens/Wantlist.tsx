@@ -5,19 +5,19 @@ import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CustomIcon from '../components/CustomIcon'
 import AlbumListItem from '../components/AlbumListItem'
-import * as albumsActions from '../store/actions/albums'
+import * as wantlistActions from '../store/actions/wantlist'
 
-const LibraryScreen = ({ navigation: { navigate } }) => {
+const WantlistScreen = ({ navigation: { navigate } }) => {
     const colorScheme = useColorScheme()
     const albums = useSelector((state) => state.albums.albums)
     const sorting = useSelector((state) => state.albums.sorting)
     const dispatch = useDispatch()
 
     useEffect(() => {
-        const fetchAlbums = async () => {
-            await dispatch(albumsActions.setAlbums())
+        const fetchWantlist = async () => {
+            await dispatch(wantlistActions.setWantlist())
         }
-        fetchAlbums()
+        fetchWantlist()
     }, [])
 
     const closeRow = (rowMap, rowKey) => {
@@ -102,4 +102,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default LibraryScreen
+export default WantlistScreen

@@ -2,9 +2,9 @@ import React from 'react'
 import { Text, View } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 
-const AccountStack = createStackNavigator()
+const FeedStack = createStackNavigator()
 
-function AccountScreen() {
+function FeedScreen() {
     return (
         <View
             style={{
@@ -15,18 +15,17 @@ function AccountScreen() {
                 backgroundColor: '#fcfcfc'
             }}
         >
-            <Text>Account</Text>
-            <Text>Version 0.13</Text>
+            <Text>Feed</Text>
         </View>
     )
 }
 
-function AccountStackScreen() {
+function FeedStackScreen() {
     return (
-        <AccountStack.Navigator>
-            <AccountStack.Screen
-                name="Account"
-                component={AccountScreen}
+        <FeedStack.Navigator>
+            <FeedStack.Screen
+                name="Feed"
+                component={FeedScreen}
                 options={{
                     headerTitle: (
                         <Text
@@ -34,7 +33,7 @@ function AccountStackScreen() {
                                 fontFamily: 'kulimpark-bold'
                             }}
                         >
-                            Your account
+                            Your feed
                         </Text>
                     ),
                     headerStyle: {
@@ -46,8 +45,8 @@ function AccountStackScreen() {
                     }
                 }}
             />
-        </AccountStack.Navigator>
+        </FeedStack.Navigator>
     )
 }
 
-export default AccountStackScreen
+export default FeedStackScreen

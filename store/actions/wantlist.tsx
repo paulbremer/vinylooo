@@ -1,7 +1,7 @@
-import { insertAlbum, removeAlbumFromDatabase, fetchAlbums } from '../../helpers/db'
+import { fetchWantlist } from '../../helpers/db'
 
 export const ADD_ALBUM = 'ADD_ALBUM'
-export const SET_ALBUMS = 'SET_ALBUMS'
+export const SET_WANTLIST = 'SET_WANTLIST'
 export const SET_SORTING = 'SET_SORTING'
 export const REMOVE_ALBUM = 'REMOVE_ALBUM'
 
@@ -61,11 +61,11 @@ export const removeAlbum = (albumId) => {
     }
 }
 
-export const setAlbums = () => {
+export const setWantlist = () => {
     return async (dispatch) => {
         try {
-            const dbResult = await fetchAlbums()
-            dispatch({ type: SET_ALBUMS, albums: dbResult.rows._array })
+            const dbResult = await fetchWantlist()
+            dispatch({ type: SET_WANTLIST, wantlist: dbResult.rows._array })
         } catch (err) {
             throw err
         }

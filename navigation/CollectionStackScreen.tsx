@@ -1,35 +1,29 @@
-import React from "react";
-import { Text, View, Button } from "react-native";
-import {
-    createStackNavigator,
-    TransitionPresets
-} from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
-import CustomIcon from "../components/CustomIcon";
-import Library from "../screens/Library";
-import Sorting from "../screens/Sorting";
-import AddAlbum from "../screens/AddAlbumManually";
-import AlbumDetail from "../screens/AlbumDetail";
-import Colors from "../constants/Colors";
-import { DrawerActions } from "@react-navigation/native";
+import React from 'react'
+import { Text, View, Button } from 'react-native'
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack'
+import { createDrawerNavigator } from '@react-navigation/drawer'
+import CustomIcon from '../components/CustomIcon'
+import Library from '../screens/Library'
+import Sorting from '../screens/Sorting'
+import AddAlbum from '../screens/AddAlbumManually'
+import AlbumDetail from '../screens/AlbumDetail'
+import Colors from '../constants/Colors'
+import { DrawerActions } from '@react-navigation/native'
 
-const CollectionStack = createStackNavigator();
-const LibraryDrawer = createDrawerNavigator();
+const CollectionStack = createStackNavigator()
+const LibraryDrawer = createDrawerNavigator()
 
 const CustomDrawerContent = ({ navigation }) => {
-    return <Sorting navigation={navigation} />;
-};
+    return <Sorting navigation={navigation} />
+}
 
 const Drawer = ({ navigation }) => {
     return (
-        <LibraryDrawer.Navigator
-            drawerContent={() => (
-                <CustomDrawerContent navigation={navigation} />
-            )}>
+        <LibraryDrawer.Navigator drawerContent={() => <CustomDrawerContent navigation={navigation} />}>
             <LibraryDrawer.Screen name="Collection" component={Library} />
         </LibraryDrawer.Navigator>
-    );
-};
+    )
+}
 
 const CollectionStackScreen = ({ navigation }) => {
     return (
@@ -41,25 +35,22 @@ const CollectionStackScreen = ({ navigation }) => {
                     headerTitle: (
                         <Text
                             style={{
-                                fontFamily: "kulimpark-bold"
-                            }}>
+                                fontFamily: 'kulimpark-bold'
+                            }}
+                        >
                             Your collection
                         </Text>
                     ),
                     headerStyle: {
-                        backgroundColor: "rgb(252,252,252)"
+                        backgroundColor: 'rgb(252,252,252)'
                     },
-                    headerTintColor: "#240549",
+                    headerTintColor: '#240549',
                     headerLeft: () => (
                         <CustomIcon
                             name="sort"
                             color={Colors.purple}
                             style={{ marginLeft: 24 }}
-                            onPress={() =>
-                                navigation.dispatch(
-                                    DrawerActions.toggleDrawer()
-                                )
-                            }
+                            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
                         />
                     ),
                     headerRight: () => (
@@ -67,7 +58,7 @@ const CollectionStackScreen = ({ navigation }) => {
                             name="add"
                             color={Colors.purple}
                             style={{ marginRight: 24 }}
-                            onPress={() => navigation.navigate("addAlbumModal")}
+                            onPress={() => navigation.navigate('addAlbumModal')}
                         />
                     )
                 }}
@@ -79,25 +70,20 @@ const CollectionStackScreen = ({ navigation }) => {
                     headerTitle: (
                         <Text
                             style={{
-                                fontFamily: "kulimpark-bold"
-                            }}>
+                                fontFamily: 'kulimpark-bold'
+                            }}
+                        >
                             {route.params.album.title}
                         </Text>
                     ),
                     headerStyle: {
-                        backgroundColor: "rgb(252,252,252)"
+                        backgroundColor: 'rgb(252,252,252)'
                     },
                     headerBackTitleVisible: false,
-                    headerBackImage: () => (
-                        <CustomIcon
-                            name="back"
-                            color={Colors.purple}
-                            style={{ marginLeft: 24 }}
-                        />
-                    ),
-                    headerTintColor: "#240549",
+                    headerBackImage: () => <CustomIcon name="back" color={Colors.purple} style={{ marginLeft: 24 }} />,
+                    headerTintColor: '#240549',
                     headerTitleStyle: {
-                        fontWeight: "bold"
+                        fontWeight: 'bold'
                     }
                 })}
             />
@@ -112,7 +98,7 @@ const CollectionStackScreen = ({ navigation }) => {
                 }}
             />
         </CollectionStack.Navigator>
-    );
-};
+    )
+}
 
-export default CollectionStackScreen;
+export default CollectionStackScreen
