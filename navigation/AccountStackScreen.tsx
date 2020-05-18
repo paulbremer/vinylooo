@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { AuthSession } from 'expo'
+import * as AuthSession from 'expo-auth-session'
 import { Text, View, TouchableOpacity, AsyncStorage } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 
