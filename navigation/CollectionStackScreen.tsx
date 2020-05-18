@@ -73,7 +73,7 @@ const CollectionStackScreen = ({ navigation }) => {
                                 fontFamily: 'kulimpark-bold'
                             }}
                         >
-                            {route.params.album.title}
+                            {route.params.album.basic_information.title}
                         </Text>
                     ),
                     headerStyle: {
