@@ -1,4 +1,5 @@
-import { insertAlbum, removeAlbumFromDatabase, fetchAlbums } from '../../helpers/db'
+import { AsyncStorage } from 'react-native'
+import { insertAlbum, insertAlbumToWantlist, removeAlbumFromDatabase, fetchAlbums } from '../../helpers/db'
 
 export const ADD_ALBUM = 'ADD_ALBUM'
 export const SET_ALBUMS = 'SET_ALBUMS'
@@ -13,8 +14,8 @@ interface Props {
     onPress: () => {}
 }
 
-export const addAlbum = (album) => {
-    // console.log("🔥 addAlbum ", album);
+export const addAlbum = (album, from) => {
+    console.log('🔥 addAlbum ')
     return async (dispatch) => {
         const { id, title, cover_image } = album
         const artistRegex = /([^-]+)/g
@@ -24,9 +25,23 @@ export const addAlbum = (album) => {
         const albumArtist = albumArtistRegex[0].trim()
         const albumTitle = albumTitleRegex[1].trim()
         const timestamp = new Date().toString()
+        let dbResult
 
         try {
-            const dbResult = await insertAlbum(albumTitle, id, albumArtist, cover_image, timestamp)
+            const token = await AsyncStorage.getItem('token')
+            const secret = await AsyncStorage.getItem('secret')
+            if (token !== null && secret !== null) {
+                console.log('🐛 ', token, secret)
+            } else {
+                console.log('not connected to discogs')
+            }
+
+            if (from === 'colllection') {
+                dbResult = await insertAlbum(albumTitle, id, albumArtist, cover_image, timestamp)
+            } else if (from === 'wantlist') {
+                console.log('insert into wantlist db')
+                dbResult = await insertAlbumToWantlist(albumTitle, id, albumArtist, cover_image, timestamp)
+            }
 
             dispatch({
                 type: ADD_ALBUM,

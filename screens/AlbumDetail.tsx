@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { View, Image, Easing, Animated, ScrollView, Dimensions, StyleSheet } from 'react-native'
+import { View, Text, Image, Easing, Animated, ScrollView, Dimensions, StyleSheet } from 'react-native'
 import Tracklist from '../components/Tracklist'
 import CustomIcon from '../components/CustomIcon'
 import colors from '../constants/Colors'
@@ -7,7 +7,15 @@ import colors from '../constants/Colors'
 const screenWidth = Math.round(Dimensions.get('window').width)
 
 const AlbumDetail = ({ route }) => {
-    const { discogsId } = route.params.album
+    const { id: discogsId } = route.params.album.basic_information
+    if (!discogsId) {
+        console.log('🚨 no discogs id')
+        return (
+            <View>
+                <Text>No ID</Text>
+            </View>
+        )
+    }
     const [albumDetail, setAlbumDetail] = useState({})
     const [loading, setLoading] = useState(true)
 

@@ -8,19 +8,10 @@ interface Props {
     onPress?: () => {}
 }
 
-const AlbumListItem = ({ album, theme = 'light', onPress }) => {
+const AlbumListItem = ({ id, artist, title, image, theme = 'light', onPress }) => {
     const colorScheme = useColorScheme()
 
     // console.log('render album', { album })
-    const { name } = album.basic_information.artists[0]
-    const { cover_image, title } = album.basic_information
-
-    const artistRegex = /([^-]+)/g
-    const titleRegex = /-(.*)/g
-    const albumArtistRegex = artistRegex.exec(album.title)
-    const albumTitleRegex = titleRegex.exec(album.title)
-    const albumArtist = albumArtistRegex[0].trim()
-    const albumTitle = albumTitleRegex && albumTitleRegex[1].trim()
 
     return (
         <TouchableHighlight
@@ -33,14 +24,7 @@ const AlbumListItem = ({ album, theme = 'light', onPress }) => {
         >
             <View style={styles.listItem}>
                 <View>
-                    <Image
-                        source={{
-                            uri: album
-                                ? cover_image
-                                : 'https://media.pitchfork.com/photos/5e21f772d7f8cd0008150e31/1:1/w_320/Mac-Miller-FACES.jpg'
-                        }}
-                        style={styles.coverArt}
-                    />
+                    <Image source={{ uri: image }} style={styles.coverArt} />
                 </View>
                 <View>
                     <Text
@@ -49,10 +33,10 @@ const AlbumListItem = ({ album, theme = 'light', onPress }) => {
                             ...{ color: theme === 'light' ? '#200740' : '#fff' }
                         }}
                     >
-                        {albumTitle ? albumTitle : title}
+                        {title}
                     </Text>
                     <Text style={colorScheme === 'dark' ? styles.artistDark : styles.artistLight}>
-                        {album.artistName ? album.artistName : name}
+                        {artist}
                         {/* -- {album.addedAt} */}
                     </Text>
                 </View>
@@ -67,7 +51,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         paddingVertical: 16,
-        // paddingHorizontal: 24,
         borderBottomColor: '#f5f5f5',
         borderBottomWidth: 1
     },

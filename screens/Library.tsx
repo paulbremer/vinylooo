@@ -1,17 +1,30 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CustomIcon from '../components/CustomIcon'
 import AlbumListItem from '../components/AlbumListItem'
+import useAuthFetch from '../hooks/useAuthFetch'
 import * as albumsActions from '../store/actions/albums'
 
 const LibraryScreen = ({ navigation: { navigate } }) => {
     const colorScheme = useColorScheme()
     const albums = useSelector((state) => state.albums.albums)
     const sorting = useSelector((state) => state.albums.sorting)
+    const [collection, setCollection] = useState([])
     const dispatch = useDispatch()
+
+    const fetchedCollection = useAuthFetch(
+        'https://api.discogs.com/users/paaaaaaaaaaul/collection/folders/0/releases',
+        {}
+    )
+
+    useEffect(() => {
+        if (fetchedCollection.response) {
+            setCollection(fetchedCollection.response.releases)
+        }
+    }, [fetchedCollection])
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -41,15 +54,23 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
     return (
         <View style={colorScheme === 'dark' ? styles.screenDark : styles.screenLight}>
             <SwipeListView
-                data={albums}
+                data={collection}
                 closeOnRowPress={true}
                 disableRightSwipe={true}
                 keyExtractor={(item) => item.id.toString()}
                 onSwipeValueChange={onSwipeValueChange}
                 renderItem={(data, rowMap) => {
                     const { item, index } = data
+                    const { artists, cover_image, id, title } = item.basic_information
                     return (
-                        <AlbumListItem key={index} album={item} onPress={() => navigate('Details', { album: item })} />
+                        <AlbumListItem
+                            key={index}
+                            id={id}
+                            artist={artists[0].name}
+                            title={title}
+                            image={cover_image}
+                            onPress={() => navigate('Details', { album: item })}
+                        />
                     )
                 }}
                 renderHiddenItem={(data, rowMap) => {

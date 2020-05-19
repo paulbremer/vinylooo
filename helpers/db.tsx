@@ -49,6 +49,25 @@ export const insertAlbum = (title, id, artist, cover_image, addedAt) => {
     return promise
 }
 
+export const insertAlbumToWantlist = (title, id, artist, cover_image, addedAt) => {
+    console.log('insertAlbumToWantlist', title, id, artist, cover_image, addedAt)
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'INSERT INTO wantlist (title, discogsId, artistName, cover_image, addedAt) VALUES (?, ?, ?, ?, ?)',
+                [title, id, artist, cover_image, addedAt],
+                (_, result) => {
+                    resolve(result)
+                },
+                (_, err) => {
+                    reject(err)
+                }
+            )
+        })
+    })
+    return promise
+}
+
 export const removeAlbumFromDatabase = (albumId) => {
     const promise = new Promise((resolve, reject) => {
         db.transaction((tx) => {

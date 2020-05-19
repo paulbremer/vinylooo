@@ -51,7 +51,12 @@ function WantlistStackScreen({ navigation }) {
                             name="add"
                             color={Colors.purple}
                             style={{ marginRight: 24 }}
-                            onPress={() => navigation.navigate('addAlbumModal')}
+                            onPress={() =>
+                                navigation.navigate('addAlbumModal', {
+                                    screen: 'AddAlbum',
+                                    params: { from: 'wantlist' }
+                                })
+                            }
                         />
                     )
                 }}
