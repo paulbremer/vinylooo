@@ -14,7 +14,7 @@ const CollectionStack = createStackNavigator()
 const LibraryDrawer = createDrawerNavigator()
 
 const CustomDrawerContent = ({ navigation }) => {
-    return <Sorting navigation={navigation} />
+    return <Sorting from="collection" navigation={navigation} />
 }
 
 const Drawer = ({ navigation }) => {

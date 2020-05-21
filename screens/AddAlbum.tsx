@@ -7,6 +7,7 @@ import Colors from '../constants/Colors'
 import CustomIcon from '../components/CustomIcon'
 import CameraOverlay from '../components/CameraOverlay'
 import * as albumsAction from '../store/actions/albums'
+import * as wantlistAction from '../store/actions/wantlist'
 
 const AddAlbum = ({ route, navigation }) => {
     const [hasPermission, setHasPermission] = useState(null)
@@ -22,8 +23,13 @@ const AddAlbum = ({ route, navigation }) => {
     }, [])
 
     const AddAlbumToCollection = (album) => {
-        dispatch(albumsAction.addAlbum(album))
-        navigation.navigate('Collection')
+        if (from === 'collection') {
+            dispatch(albumsAction.addAlbum(album))
+            navigation.navigate('Collection')
+        } else {
+            dispatch(wantlistAction.addAlbum(album))
+            navigation.navigate('Wantlist')
+        }
     }
 
     const onBarCodeScanned = (barCode) => {

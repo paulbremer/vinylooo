@@ -1,4 +1,4 @@
-import { SET_WANTLIST, SET_SORTING } from '../actions/wantlist'
+import { ADD_ALBUM_TO_WANTLIST, REMOVE_ALBUM_FROM_WANTLIST, SET_WANTLIST, SET_SORTING } from '../actions/wantlist'
 
 const initialState = {
     albums: [],
@@ -17,33 +17,35 @@ export default (state = initialState, action) => {
                 ...state,
                 albums: setSortedWantlist
             }
-        // case ADD_ALBUM:
-        //     const newAlbum = [
-        //         {
-        //             id: action.albumData.id.toString(),
-        //             discogsId: action.albumData.discogsId,
-        //             addedAt: action.albumData.addedAt,
-        //             title: action.albumData.title,
-        //             cover_image: action.albumData.cover_image,
-        //             artistName: action.albumData.artist
-        //         }
-        //     ]
-        //     let newAlbumArray
-        //     if (state.sorting === 'date') {
-        //         newAlbumArray = newAlbum.concat(state.albums)
-        //     } else {
-        //         newAlbumArray = state.albums.concat(newAlbum)
-        //     }
+        case ADD_ALBUM_TO_WANTLIST:
+            const newAlbum = [
+                {
+                    id: action.albumData.id.toString(),
+                    discogsId: action.albumData.discogsId,
+                    basic_information: {
+                        title: action.albumData.title,
+                        artists: [{ name: action.albumData.artist }],
+                        cover_image: action.albumData.cover_image
+                    },
+                    date_added: new Date()
+                }
+            ]
+            let newAlbumArray
+            if (state.sorting === 'date') {
+                newAlbumArray = newAlbum.concat(state.albums)
+            } else {
+                newAlbumArray = state.albums.concat(newAlbum)
+            }
 
-        //     return {
-        //         ...state,
-        //         albums: newAlbumArray
-        //     }
-        // case REMOVE_ALBUM:
-        //     return {
-        //         ...state,
-        //         albums: state.albums.filter((album) => album.id !== action.albumId)
-        //     }
+            return {
+                ...state,
+                albums: newAlbumArray
+            }
+        case REMOVE_ALBUM_FROM_WANTLIST:
+            return {
+                ...state,
+                albums: state.albums.filter((album) => album.id !== action.albumId)
+            }
         case SET_SORTING:
             const appliedSorting = action.sorting
             let sortedAlbums = state.albums

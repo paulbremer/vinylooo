@@ -27,7 +27,7 @@ const WantlistScreen = ({ navigation: { navigate } }) => {
 
     const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey)
-        dispatch(albumsActions.removeAlbum(rowKey))
+        dispatch(wantlistActions.removeAlbum(rowKey))
     }
 
     const onSwipeValueChange = (swipeData) => {

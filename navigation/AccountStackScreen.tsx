@@ -27,6 +27,15 @@ const storeData = async (key, value) => {
     }
 }
 
+const storeObject = async (key, value) => {
+    try {
+        const jsonValue = JSON.stringify(value)
+        await AsyncStorage.setItem(key, jsonValue)
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 function AccountScreen() {
     const [userInfo, setUserInfo] = useState({})
     const [requestToken, setRequestToken] = useState('')
@@ -76,7 +85,7 @@ function AccountScreen() {
             setOauthVerifier(results.params.oauth_verifier)
 
             // 4. SEND A POST REQUEST TO THE DISCOGS ACCESS TOKEN URL
-            let response = await fetch('https://api.discogs.com/oauth/access_token', {
+            await fetch('https://api.discogs.com/oauth/access_token', {
                 method: 'POST',
                 headers: {
                     'Content-type': 'application/x-www-form-urlencoded',
@@ -90,7 +99,6 @@ function AccountScreen() {
                 }
             })
                 .then(async (response) => {
-                    console.log('🔥 ', response.status)
                     let data = await response.text()
                     console.log('4# ', data)
 
@@ -98,22 +106,19 @@ function AccountScreen() {
                         const finalToken = data.match('oauth_token=(.*)&oauth_token_secret')[1]
                         const finalTokenSecret = data.match('oauth_token_secret=(.*)')[1]
 
-                        console.log(finalToken)
-                        console.log(finalTokenSecret)
-
                         storeData('token', finalToken)
                         storeData('secret', finalTokenSecret)
                         storeData('discogsActive', true)
 
-                        getUserInfo()
+                        getIdentity()
                     }
                 })
                 .catch((err) => console.log(err))
         }
     }
 
-    const getUserInfo = async () => {
-        console.log('getUserInfo')
+    const getIdentity = async () => {
+        console.log('getIdentity')
 
         try {
             const token = await AsyncStorage.getItem('token')
@@ -132,10 +137,36 @@ function AccountScreen() {
                 })
                     .then(async (data) => {
                         let json = await data.json()
-                        console.log(json)
+                        storeData('username', json.username)
                         setUserInfo(json)
+                        getUserInfo()
                     })
                     .catch((err) => console.log(err))
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getUserInfo = async () => {
+        try {
+            const token = await AsyncStorage.getItem('token')
+            const secret = await AsyncStorage.getItem('secret')
+            if (token !== null && secret !== null) {
+                fetch('https://api.discogs.com/users/paaaaaaaaaaul', {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded',
+                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${token}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
+                            10
+                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${secret}`
+                    }
+                })
+                    .then(async (data) => {
+                        let json = await data.json()
+                        storeObject('userData', json)
+                    })
+                    .catch((err) => console.error(err))
             }
         } catch (error) {
             console.error(error)
@@ -163,7 +194,7 @@ function AccountScreen() {
                 <Text>User ID: {userInfo.id}</Text>
                 <Text>Username: {userInfo.username}</Text>
 
-                <TouchableOpacity onPress={getUserInfo}>
+                <TouchableOpacity onPress={getIdentity}>
                     <Text>Get User Info</Text>
                 </TouchableOpacity>
             </View>

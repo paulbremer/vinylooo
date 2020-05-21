@@ -49,11 +49,11 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
                 onSwipeValueChange={onSwipeValueChange}
                 renderItem={(data, rowMap) => {
                     const { item, index } = data
-                    const { artists, cover_image, id, title } = item.basic_information
+                    const { artists, cover_image, title } = item.basic_information
                     return (
                         <AlbumListItem
                             key={index}
-                            id={id}
+                            id={item.id}
                             artist={artists[0].name}
                             title={title}
                             image={cover_image}

@@ -86,6 +86,24 @@ export const removeAlbumFromDatabase = (albumId) => {
     return promise
 }
 
+export const removeAlbumFromWantlistDatabase = (albumId) => {
+    const promise = new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `DELETE FROM wantlist WHERE id = ?`,
+                [albumId],
+                (_, result) => {
+                    resolve(result)
+                },
+                (_, err) => {
+                    reject(err)
+                }
+            )
+        })
+    })
+    return promise
+}
+
 export const fetchAlbums = () => {
     const promise = new Promise((resolve, reject) => {
         db.transaction((tx) => {

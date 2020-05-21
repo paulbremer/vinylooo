@@ -6,6 +6,8 @@ const initialState = {
     sorting: 'date'
 }
 
+const timestamp = Math.round(new Date().getTime() / 1000)
+
 export default (state = initialState, action) => {
     switch (action.type) {
         case SET_ALBUMS:
@@ -27,7 +29,7 @@ export default (state = initialState, action) => {
                         artists: [{ name: action.albumData.artist }],
                         cover_image: action.albumData.cover_image
                     },
-                    date_added: new Date()
+                    date_added: timestamp
                 }
             ]
             let newAlbumArray

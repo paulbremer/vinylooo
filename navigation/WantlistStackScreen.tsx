@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text } from 'react-native'
+import { Text, View } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { DrawerActions } from '@react-navigation/native'
@@ -11,14 +11,14 @@ import Colors from '../constants/Colors'
 
 const WantlistDrawer = createDrawerNavigator()
 
-const CustomDrawerContent = ({ navigation }) => {
-    return <Sorting navigation={navigation} />
+const CustomDrawerContentWantlist = ({ navigation }) => {
+    return <Sorting from="wantlist" navigation={navigation} />
 }
 
-const Drawer = ({ navigation }) => {
+const DrawerForWantlist = ({ navigation }) => {
     return (
-        <WantlistDrawer.Navigator drawerContent={() => <CustomDrawerContent navigation={navigation} />}>
-            <WantlistDrawer.Screen name="Collection" component={Wantlist} />
+        <WantlistDrawer.Navigator drawerContent={() => <CustomDrawerContentWantlist navigation={navigation} />}>
+            <WantlistDrawer.Screen name="Wantlist" component={Wantlist} />
         </WantlistDrawer.Navigator>
     )
 }
@@ -30,7 +30,7 @@ function WantlistStackScreen({ navigation }) {
         <WantlistStack.Navigator>
             <WantlistStack.Screen
                 name="Wantlist"
-                component={Drawer}
+                component={DrawerForWantlist}
                 options={{
                     headerTitle: (
                         <Text

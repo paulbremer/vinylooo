@@ -7,7 +7,7 @@ import colors from '../constants/Colors'
 const screenWidth = Math.round(Dimensions.get('window').width)
 
 const AlbumDetail = ({ route }) => {
-    const { id: discogsId } = route.params.album.basic_information
+    const { id: discogsId } = route.params.album
     if (!discogsId) {
         console.log('🚨 no discogs id')
         return (
