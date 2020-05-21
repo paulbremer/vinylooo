@@ -1,26 +1,17 @@
 import { SET_ALBUMS, ADD_ALBUM, REMOVE_ALBUM, SET_SORTING } from '../actions/albums'
 
-interface Album {
-    id: string
-    discogsId: number
-    title: string
-    cover_image: string
-    artistName: string
-}
-
 const initialState = {
     albums: [],
     sortedAlbums: [],
-    sorting: 'date',
-    wantlist: []
+    sorting: 'date'
 }
 
 export default (state = initialState, action) => {
     switch (action.type) {
         case SET_ALBUMS:
-            let setSortedAlbums = action.albums
+            let setSortedAlbums = action.payload
             if (state.sorting === 'date') {
-                setSortedAlbums = action.albums.sort((a, b) => b.addedAt.localeCompare(a.addedAt))
+                setSortedAlbums = action.payload.sort((a, b) => b.date_added.localeCompare(a.date_added))
             }
             return {
                 ...state,
@@ -31,10 +22,12 @@ export default (state = initialState, action) => {
                 {
                     id: action.albumData.id.toString(),
                     discogsId: action.albumData.discogsId,
-                    addedAt: action.albumData.addedAt,
-                    title: action.albumData.title,
-                    cover_image: action.albumData.cover_image,
-                    artistName: action.albumData.artist
+                    basic_information: {
+                        title: action.albumData.title,
+                        artists: [{ name: action.albumData.artist }],
+                        cover_image: action.albumData.cover_image
+                    },
+                    date_added: new Date()
                 }
             ]
             let newAlbumArray
@@ -56,15 +49,20 @@ export default (state = initialState, action) => {
         case SET_SORTING:
             const appliedSorting = action.sorting
             let sortedAlbums = state.albums
+
             switch (appliedSorting) {
                 case 'date':
-                    sortedAlbums = state.albums.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt))
+                    sortedAlbums = state.albums.sort((a, b) => new Date(b.date_added) - new Date(a.date_added))
                     break
                 case 'artist':
-                    sortedAlbums = state.albums.sort((a, b) => a.artistName.localeCompare(b.artistName))
+                    sortedAlbums = state.albums.sort((a, b) =>
+                        a.basic_information.artists[0].name.localeCompare(b.basic_information.artists[0].name)
+                    )
                     break
                 case 'title':
-                    sortedAlbums = state.albums.sort((a, b) => a.title.localeCompare(b.title))
+                    sortedAlbums = state.albums.sort((a, b) =>
+                        a.basic_information.title.localeCompare(b.basic_information.title)
+                    )
                     break
                 default:
                     sortedAlbums = state.albums

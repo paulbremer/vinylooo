@@ -6,6 +6,7 @@ import AlbumListItem from '../components/AlbumListItem'
 import Colors from '../constants/Colors'
 import useDebounce from '../hooks/useDebounce'
 import * as albumsAction from '../store/actions/albums'
+import * as wantlistAction from '../store/actions/wantlist'
 
 const AddAlbumManually = ({ route, navigation }) => {
     const [searchTerm, setsearchTerm] = useState('')
@@ -21,13 +22,11 @@ const AddAlbumManually = ({ route, navigation }) => {
     }, [debouncedSearchTerm])
 
     const fetchAlbums = (searchTerm) => {
-        console.log('fetchAlbums', searchTerm)
         fetch(
             `https://api.discogs.com/database/search?q=${searchTerm}&type=release&format=vinyl&key=tILfDjLHXNBVjcVQthxa&secret=KIIXTQskHkIifimxKtedzTKnBSNigSZL`
         )
             .then((response) => {
                 if (response.status !== 200) {
-                    console.log('Looks like there was a problem. Status Code: ' + response.status)
                     return
                 }
 
@@ -35,15 +34,17 @@ const AddAlbumManually = ({ route, navigation }) => {
                     setResults(data.results)
                 })
             })
-            .catch((err) => {
-                console.log('Fetch Error', err)
-            })
+            .catch((err) => {})
     }
 
     const AddAlbumToCollection = (album) => {
-        console.log('👋🏻 AddAlbumToCollection')
-        dispatch(albumsAction.addAlbum(album, from))
-        // navigation.navigate('Collection')
+        if (from === 'collection') {
+            dispatch(albumsAction.addAlbum(album))
+            navigation.navigate('Collection')
+        } else {
+            dispatch(wantlistAction.addAlbum(album))
+            navigation.navigate('Wantlist')
+        }
     }
 
     return (
@@ -81,6 +82,7 @@ const AddAlbumManually = ({ route, navigation }) => {
                             return (
                                 <AlbumListItem
                                     key={item.id}
+                                    id={item.id}
                                     artist={albumArtist}
                                     title={albumTitle}
                                     image={cover_image}

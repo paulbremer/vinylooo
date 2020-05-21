@@ -13,12 +13,12 @@ import CollectionStackScreen from './navigation/CollectionStackScreen'
 import WantlistStackScreen from './navigation/WantlistStackScreen'
 import DiscoverStackScreen from './navigation/DiscoverStackScreen'
 import AccountStackScreen from './navigation/AccountStackScreen'
-import AlbumDetailScreen from './screens/AlbumDetail'
 import CustomIcon from './components/CustomIcon'
 import AddAlbum from './screens/AddAlbum'
 import AddAlbumManually from './screens/AddAlbumManually'
 import Colors from './constants/Colors'
 import albumsReducer from './store/reducers/albums'
+import wantlistReducer from './store/reducers/wantlist'
 import { init } from './helpers/db'
 
 init()
@@ -30,14 +30,14 @@ init()
     })
 
 const rootReducer = combineReducers({
-    albums: albumsReducer
+    albums: albumsReducer,
+    wantlist: wantlistReducer
 })
 
 const store = createStore(rootReducer, applyMiddleware(ReduxThunk))
 
 const RootStack = createStackNavigator()
 const ScanAlbumStack = createStackNavigator()
-const AlbumDetailStack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 
 const MyTheme = {
@@ -189,32 +189,6 @@ export default function App() {
                             name="addAlbumModal"
                             component={ScanAlbumScreen}
                             options={{ headerShown: false }}
-                        />
-                        <AlbumDetailStack.Screen
-                            name="AlbumDetailScreen"
-                            component={AlbumDetailScreen}
-                            options={({ route, navigation }) => ({
-                                headerTitle: (
-                                    <Text
-                                        style={{
-                                            fontFamily: 'kulimpark-bold'
-                                        }}
-                                    >
-                                        {route.params.album.basic_information.title}
-                                    </Text>
-                                ),
-                                headerStyle: {
-                                    backgroundColor: 'rgb(252,252,252)'
-                                },
-                                headerBackTitleVisible: false,
-                                headerBackImage: () => (
-                                    <CustomIcon name="back" color={Colors.purple} style={{ marginLeft: 24 }} />
-                                ),
-                                headerTintColor: '#240549',
-                                headerTitleStyle: {
-                                    fontWeight: 'bold'
-                                }
-                            })}
                         />
                     </RootStack.Navigator>
                 </NavigationContainer>

@@ -1,7 +1,9 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
+import { DrawerActions } from '@react-navigation/native'
+import AlbumDetail from '../screens/AlbumDetail'
 import Wantlist from '../screens/Wantlist'
 import Sorting from '../screens/Sorting'
 import CustomIcon from '../components/CustomIcon'
@@ -46,6 +48,14 @@ function WantlistStackScreen({ navigation }) {
                     headerTitleStyle: {
                         fontWeight: 'bold'
                     },
+                    headerLeft: () => (
+                        <CustomIcon
+                            name="sort"
+                            color={Colors.purple}
+                            style={{ marginLeft: 24 }}
+                            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+                        />
+                    ),
                     headerRight: () => (
                         <CustomIcon
                             name="add"
@@ -60,6 +70,30 @@ function WantlistStackScreen({ navigation }) {
                         />
                     )
                 }}
+            />
+            <WantlistStack.Screen
+                name="Details"
+                component={AlbumDetail}
+                options={({ route }) => ({
+                    headerTitle: (
+                        <Text
+                            style={{
+                                fontFamily: 'kulimpark-bold'
+                            }}
+                        >
+                            {route.params.album.basic_information.title}
+                        </Text>
+                    ),
+                    headerStyle: {
+                        backgroundColor: 'rgb(252,252,252)'
+                    },
+                    headerBackTitleVisible: false,
+                    headerBackImage: () => <CustomIcon name="back" color={Colors.purple} style={{ marginLeft: 24 }} />,
+                    headerTintColor: '#240549',
+                    headerTitleStyle: {
+                        fontWeight: 'bold'
+                    }
+                })}
             />
         </WantlistStack.Navigator>
     )

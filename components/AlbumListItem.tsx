@@ -11,8 +11,6 @@ interface Props {
 const AlbumListItem = ({ id, artist, title, image, theme = 'light', onPress }) => {
     const colorScheme = useColorScheme()
 
-    // console.log('render album', { album })
-
     return (
         <TouchableHighlight
             onPress={onPress}
@@ -51,6 +49,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         paddingVertical: 16,
+        paddingLeft: 24,
         borderBottomColor: '#f5f5f5',
         borderBottomWidth: 1
     },

@@ -1,30 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { View, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CustomIcon from '../components/CustomIcon'
 import AlbumListItem from '../components/AlbumListItem'
-import useAuthFetch from '../hooks/useAuthFetch'
 import * as albumsActions from '../store/actions/albums'
 
 const LibraryScreen = ({ navigation: { navigate } }) => {
     const colorScheme = useColorScheme()
     const albums = useSelector((state) => state.albums.albums)
     const sorting = useSelector((state) => state.albums.sorting)
-    const [collection, setCollection] = useState([])
     const dispatch = useDispatch()
-
-    const fetchedCollection = useAuthFetch(
-        'https://api.discogs.com/users/paaaaaaaaaaul/collection/folders/0/releases',
-        {}
-    )
-
-    useEffect(() => {
-        if (fetchedCollection.response) {
-            setCollection(fetchedCollection.response.releases)
-        }
-    }, [fetchedCollection])
 
     useEffect(() => {
         const fetchAlbums = async () => {
@@ -41,7 +28,8 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
 
     const deleteRow = (rowMap, rowKey) => {
         closeRow(rowMap, rowKey)
-        dispatch(albumsActions.removeAlbum(rowKey))
+        const { instance_id } = rowMap[rowKey].props.item
+        dispatch(albumsActions.removeAlbum(rowKey, instance_id))
     }
 
     const onSwipeValueChange = (swipeData) => {
@@ -54,7 +42,7 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
     return (
         <View style={colorScheme === 'dark' ? styles.screenDark : styles.screenLight}>
             <SwipeListView
-                data={collection}
+                data={albums}
                 closeOnRowPress={true}
                 disableRightSwipe={true}
                 keyExtractor={(item) => item.id.toString()}
@@ -86,7 +74,6 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
                     )
                 }}
                 rightOpenValue={-75}
-                style={{ paddingLeft: 24 }}
             />
         </View>
     )
@@ -98,8 +85,6 @@ const styles = StyleSheet.create({
     },
     screenDark: {
         flex: 1,
-        marginHorizontal: 24,
-        paddingVertical: 16,
         backgroundColor: '#000'
     },
     rowBack: {

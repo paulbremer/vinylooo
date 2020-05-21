@@ -1,27 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { View, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native'
+import React, { useEffect } from 'react'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CustomIcon from '../components/CustomIcon'
 import AlbumListItem from '../components/AlbumListItem'
-import useAuthFetch from '../hooks/useAuthFetch'
 import * as wantlistActions from '../store/actions/wantlist'
 
 const WantlistScreen = ({ navigation: { navigate } }) => {
     const colorScheme = useColorScheme()
-    const albums = useSelector((state) => state.albums.albums)
-    const sorting = useSelector((state) => state.albums.sorting)
-    const [wantlist, setWantlist] = useState([])
+    const wantlist = useSelector((state) => state.wantlist)
     const dispatch = useDispatch()
-
-    const fetchedWantlist = useAuthFetch('https://api.discogs.com/users/paaaaaaaaaaul/wants', {})
-
-    useEffect(() => {
-        if (fetchedWantlist.response) {
-            setWantlist(fetchedWantlist.response.wants)
-        }
-    }, [fetchedWantlist])
 
     useEffect(() => {
         const fetchWantlist = async () => {
@@ -51,7 +40,7 @@ const WantlistScreen = ({ navigation: { navigate } }) => {
     return (
         <View style={colorScheme === 'dark' ? styles.screenDark : styles.screenLight}>
             <SwipeListView
-                data={wantlist}
+                data={wantlist.albums}
                 closeOnRowPress={true}
                 disableRightSwipe={true}
                 keyExtractor={(item) => item.id.toString()}
@@ -65,7 +54,7 @@ const WantlistScreen = ({ navigation: { navigate } }) => {
                             artist={artists[0].name}
                             title={title}
                             image={cover_image}
-                            onPress={() => navigate('AlbumDetailScreen', { album: item })}
+                            onPress={() => navigate('Details', { album: item })}
                         />
                     )
                 }}
@@ -82,7 +71,6 @@ const WantlistScreen = ({ navigation: { navigate } }) => {
                     )
                 }}
                 rightOpenValue={-75}
-                style={{ paddingLeft: 24 }}
             />
         </View>
     )
@@ -94,8 +82,6 @@ const styles = StyleSheet.create({
     },
     screenDark: {
         flex: 1,
-        marginHorizontal: 24,
-        paddingVertical: 16,
         backgroundColor: '#000'
     },
     rowBack: {
