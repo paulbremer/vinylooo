@@ -82,7 +82,10 @@ const AlbumDetail = ({ route }) => {
         )
     }
 
-    // console.log(albumDetail);
+    // console.log('😍 ', albumDetail)
+    // console.log('😍 rating ', albumDetail.community.rating)
+    // console.log('😍 lowest_price ', albumDetail.lowest_price)
+    // console.log('😍 released ', albumDetail.released)
 
     return (
         <ScrollView>

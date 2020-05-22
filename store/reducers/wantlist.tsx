@@ -9,8 +9,8 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case SET_WANTLIST:
+            console.log('💙', action)
             let setSortedWantlist = action.payload
-            console.log('💙', setSortedWantlist.length)
             if (state.sorting === 'date') {
                 setSortedWantlist = action.payload.sort((a, b) => b.date_added.localeCompare(a.date_added))
             }
