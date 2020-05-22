@@ -178,6 +178,15 @@ const AccountScreen = () => {
         }
     }
 
+    const logOut = () => {
+        setUserInfo({})
+        setCollectionValue({})
+        storeData('token', '')
+        storeData('secret', '')
+        storeData('username', '')
+        storeObject('userData', {})
+    }
+
     return (
         <View
             style={{
@@ -204,13 +213,17 @@ const AccountScreen = () => {
                                 source={{ uri: userInfo.avatar_url }}
                             />
                         </View>
-                        <Text>User ID: {userInfo.id}</Text>
+                        <Text>id: {userInfo.id}</Text>
                         <Text>location: {userInfo.location}</Text>
                         <Text>releases_rated: {userInfo.releases_rated}</Text>
                         <Text>rating_avg: {userInfo.rating_avg}</Text>
                         <Text>num_collection: {userInfo.num_collection}</Text>
                         <Text>num_wantlist: {userInfo.num_wantlist}</Text>
                         {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
+
+                        <TouchableOpacity onPress={logOut}>
+                            <Text>Log Out</Text>
+                        </TouchableOpacity>
                     </>
                 )}
             </View>

@@ -148,7 +148,7 @@ export const setWantlist = () => {
         } else {
             try {
                 const dbResult = await fetchWantlist()
-                dispatch({ type: SET_WANTLIST, wantlist: dbResult.rows._array })
+                dispatch({ type: SET_WANTLIST, payload: dbResult.rows._array })
             } catch (err) {
                 throw err
             }

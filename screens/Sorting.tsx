@@ -12,8 +12,6 @@ const Sorting = ({ from, navigation }) => {
     const [sortOption, setSortOption] = useState(sorting)
     const dispatch = useDispatch()
 
-    console.log('render sorting for ', from)
-
     const updateSortOption = (option) => {
         setSortOption(option)
         navigation.dispatch(DrawerActions.closeDrawer())
