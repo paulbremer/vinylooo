@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as AuthSession from 'expo-auth-session'
-import { Text, View, TouchableOpacity, AsyncStorage } from 'react-native'
+import { Text, Image, View, TouchableOpacity, AsyncStorage } from 'react-native'
 import makeid from '../helpers/nonce'
 import { storeData, storeObject } from '../helpers/storeData'
 
@@ -12,10 +12,6 @@ const AccountScreen = () => {
     const [userInfo, setUserInfo] = useState({})
     const [requestToken, setRequestToken] = useState('')
     const [requestTokenSecret, setRequestTokenSecret] = useState('')
-    const [oauthToken, setOauthToken] = useState('')
-    const [oauthTokenSecret, setOauthTokenSecret] = useState('')
-    const [oauthVerifier, setOauthVerifier] = useState('')
-    const [error, setError] = useState(false)
 
     useEffect(() => {
         const getToken = async () => {
@@ -42,6 +38,16 @@ const AccountScreen = () => {
                 setRequestTokenSecret(tokenSecret)
             })
             .catch((err) => console.log(err))
+
+        const fetchUserData = async () => {
+            const token = await AsyncStorage.getItem('token')
+            const secret = await AsyncStorage.getItem('secret')
+            if (token !== null && secret !== null) {
+                console.log('😎 user has token')
+                getIdentity(token, secret)
+            }
+        }
+        fetchUserData()
     }, [])
 
     const handleDiscogsLogin = async () => {
@@ -53,9 +59,6 @@ const AccountScreen = () => {
         console.log('3# ', results)
 
         if (results.type !== 'cancel') {
-            setOauthToken(results.params.oauth_token)
-            setOauthVerifier(results.params.oauth_verifier)
-
             // 4. SEND A POST REQUEST TO THE DISCOGS ACCESS TOKEN URL
             await fetch('https://api.discogs.com/oauth/access_token', {
                 method: 'POST',
@@ -80,21 +83,19 @@ const AccountScreen = () => {
 
                         storeData('token', finalToken)
                         storeData('secret', finalTokenSecret)
-                        storeData('discogsActive', true)
+                        storeData('discogsActive', 'true')
 
-                        getIdentity()
+                        getIdentity(finalToken, finalTokenSecret)
                     }
                 })
                 .catch((err) => console.log(err))
         }
     }
 
-    const getIdentity = async () => {
-        console.log('getIdentity')
+    const getIdentity = async (token, secret) => {
+        console.log('getIdentity', token, secret)
 
         try {
-            const token = await AsyncStorage.getItem('token')
-            const secret = await AsyncStorage.getItem('secret')
             if (token !== null && secret !== null) {
                 console.log('🐛 ', token, secret)
 
@@ -109,9 +110,16 @@ const AccountScreen = () => {
                 })
                     .then(async (data) => {
                         let json = await data.json()
-                        storeData('username', json.username)
-                        setUserInfo(json)
-                        getUserInfo()
+                        console.log('🔥 ', json)
+                        if (json.username) {
+                            storeData('username', json.username)
+                            getUserInfo(token, secret)
+                            getCollectionValue(token, secret)
+                        } else {
+                            console.log('heb geen username dus')
+                            storeData('token', '')
+                            storeData('secret', '')
+                        }
                     })
                     .catch((err) => console.log(err))
             }
@@ -120,10 +128,9 @@ const AccountScreen = () => {
         }
     }
 
-    const getUserInfo = async () => {
+    const getUserInfo = async (token, secret) => {
+        console.log('getUserInfo', token, secret)
         try {
-            const token = await AsyncStorage.getItem('token')
-            const secret = await AsyncStorage.getItem('secret')
             if (token !== null && secret !== null) {
                 fetch('https://api.discogs.com/users/paaaaaaaaaaul', {
                     method: 'GET',
@@ -136,7 +143,33 @@ const AccountScreen = () => {
                 })
                     .then(async (data) => {
                         let json = await data.json()
+                        console.log('💪🏼 ', json.username)
                         storeObject('userData', json)
+                        setUserInfo({ ...json, ...userInfo })
+                    })
+                    .catch((err) => console.error(err))
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getCollectionValue = async (token, secret) => {
+        try {
+            if (token !== null && secret !== null) {
+                fetch('https://api.discogs.com/users/paaaaaaaaaaul/collection/value', {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded',
+                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${token}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
+                            10
+                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${secret}`
+                    }
+                })
+                    .then(async (data) => {
+                        let json = await data.json()
+                        console.log('🤷🏼‍♂️ ', json)
+                        setUserInfo({ ...userInfo, collection_value: json })
                     })
                     .catch((err) => console.error(err))
             }
@@ -155,23 +188,34 @@ const AccountScreen = () => {
                 backgroundColor: '#fcfcfc'
             }}
         >
-            <Text>Account</Text>
-            <TouchableOpacity onPress={handleDiscogsLogin} disabled={requestToken ? false : true}>
-                <Text>Login with Discogs</Text>
-            </TouchableOpacity>
+            {Object.keys(userInfo).length === 0 && (
+                <TouchableOpacity onPress={handleDiscogsLogin} disabled={requestToken ? false : true}>
+                    <Text>Login with Discogs</Text>
+                </TouchableOpacity>
+            )}
 
             <View>
-                <Text>Request Token: {requestToken}</Text>
-                <Text>OAuth Token: {oauthToken}</Text>
-                <Text>User ID: {userInfo.id}</Text>
-                <Text>Username: {userInfo.username}</Text>
-
-                <TouchableOpacity onPress={getIdentity}>
-                    <Text>Get User Info</Text>
-                </TouchableOpacity>
+                {Object.keys(userInfo).length !== 0 && (
+                    <>
+                        <View style={{ marginBottom: 50 }}>
+                            <Text>{userInfo.username}</Text>
+                            <Image
+                                style={{ width: 150, height: 150, borderRadius: 150 }}
+                                source={{ uri: userInfo.avatar_url }}
+                            />
+                        </View>
+                        <Text>User ID: {userInfo.id}</Text>
+                        <Text>location: {userInfo.location}</Text>
+                        <Text>releases_rated: {userInfo.releases_rated}</Text>
+                        <Text>rating_avg: {userInfo.rating_avg}</Text>
+                        <Text>num_collection: {userInfo.num_collection}</Text>
+                        <Text>num_wantlist: {userInfo.num_wantlist}</Text>
+                        <Text>collection_value: {userInfo.collection_value.median}</Text>
+                    </>
+                )}
             </View>
 
-            <Text>Version 0.13</Text>
+            <Text>Version 0.14</Text>
         </View>
     )
 }
