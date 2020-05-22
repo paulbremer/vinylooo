@@ -10,6 +10,7 @@ const timestamp = Date.now()
 
 const AccountScreen = () => {
     const [userInfo, setUserInfo] = useState({})
+    const [collectionValue, setCollectionValue] = useState({})
     const [requestToken, setRequestToken] = useState('')
     const [requestTokenSecret, setRequestTokenSecret] = useState('')
 
@@ -114,7 +115,6 @@ const AccountScreen = () => {
                         if (json.username) {
                             storeData('username', json.username)
                             getUserInfo(token, secret)
-                            getCollectionValue(token, secret)
                         } else {
                             console.log('heb geen username dus')
                             storeData('token', '')
@@ -146,6 +146,7 @@ const AccountScreen = () => {
                         console.log('💪🏼 ', json.username)
                         storeObject('userData', json)
                         setUserInfo({ ...json, ...userInfo })
+                        getCollectionValue(token, secret)
                     })
                     .catch((err) => console.error(err))
             }
@@ -168,8 +169,7 @@ const AccountScreen = () => {
                 })
                     .then(async (data) => {
                         let json = await data.json()
-                        console.log('🤷🏼‍♂️ ', json)
-                        setUserInfo({ ...userInfo, collection_value: json })
+                        setCollectionValue(json)
                     })
                     .catch((err) => console.error(err))
             }
@@ -210,7 +210,7 @@ const AccountScreen = () => {
                         <Text>rating_avg: {userInfo.rating_avg}</Text>
                         <Text>num_collection: {userInfo.num_collection}</Text>
                         <Text>num_wantlist: {userInfo.num_wantlist}</Text>
-                        <Text>collection_value: {userInfo.collection_value.median}</Text>
+                        {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
                     </>
                 )}
             </View>
