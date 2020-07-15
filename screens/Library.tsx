@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useEffect } from 'react'
+import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
@@ -10,7 +10,6 @@ import * as albumsActions from '../store/actions/albums'
 const LibraryScreen = ({ navigation: { navigate } }) => {
     const colorScheme = useColorScheme()
     const albums = useSelector((state) => state.albums.albums)
-    const sorting = useSelector((state) => state.albums.sorting)
     const dispatch = useDispatch()
 
     useEffect(() => {

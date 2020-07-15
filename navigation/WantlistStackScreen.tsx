@@ -30,7 +30,7 @@ function WantlistStackScreen({ navigation }) {
         <WantlistStack.Navigator>
             <WantlistStack.Screen
                 name="Wantlist"
-                component={DrawerForWantlist}
+                component={Wantlist}
                 options={{
                     headerTitle: (
                         <Text
@@ -48,14 +48,14 @@ function WantlistStackScreen({ navigation }) {
                     headerTitleStyle: {
                         fontWeight: 'bold'
                     },
-                    headerLeft: () => (
-                        <CustomIcon
-                            name="sort"
-                            color={Colors.purple}
-                            style={{ marginLeft: 24 }}
-                            onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
-                        />
-                    ),
+                    // headerLeft: () => (
+                    //     <CustomIcon
+                    //         name="sort"
+                    //         color={Colors.purple}
+                    //         style={{ marginLeft: 24 }}
+                    //         onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+                    //     />
+                    // ),
                     headerRight: () => (
                         <CustomIcon
                             name="add"

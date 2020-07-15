@@ -45,6 +45,8 @@ const AccountScreen = () => {
             const secret = await AsyncStorage.getItem('secret')
             if (token !== null && secret !== null) {
                 console.log('😎 user has token')
+                setRequestToken(token)
+                setRequestTokenSecret(secret)
                 getIdentity(token, secret)
             }
         }
@@ -228,7 +230,7 @@ const AccountScreen = () => {
                 )}
             </View>
 
-            <Text>Version 0.14</Text>
+            <Text>Version 0.15</Text>
         </View>
     )
 }

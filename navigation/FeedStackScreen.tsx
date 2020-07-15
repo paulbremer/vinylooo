@@ -1,24 +1,9 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
+import FeedScreen from '../screens/Feed'
 
 const FeedStack = createStackNavigator()
-
-function FeedScreen() {
-    return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: 48,
-                backgroundColor: '#fcfcfc'
-            }}
-        >
-            <Text>Feed</Text>
-        </View>
-    )
-}
 
 function FeedStackScreen() {
     return (

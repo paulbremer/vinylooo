@@ -89,7 +89,7 @@ const ScanAlbumScreen = () => {
             <ScanAlbumStack.Screen
                 name="AddAlbumManually"
                 component={AddAlbumManually}
-                options={({ navigation }) => ({
+                options={({ route, navigation }) => ({
                     headerTitle: (
                         <Text
                             style={{
@@ -113,7 +113,11 @@ const ScanAlbumScreen = () => {
                             name="close"
                             color="#ffffff"
                             style={{ marginRight: 24 }}
-                            onPress={() => navigation.navigate('Collection')}
+                            onPress={() =>
+                                route.params.from === 'collection'
+                                    ? navigation.navigate('Collection')
+                                    : navigation.navigate('Wantlist')
+                            }
                         />
                     )
                 })}
