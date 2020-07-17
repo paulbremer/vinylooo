@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<AlbumListItem /> should match snapshot 1`] = `
+<View
+  accessible={true}
+  focusable={false}
+  onClick={[Function]}
+  onResponderGrant={[Function]}
+  onResponderMove={[Function]}
+  onResponderRelease={[Function]}
+  onResponderTerminate={[Function]}
+  onResponderTerminationRequest={[Function]}
+  onStartShouldSetResponder={[Function]}
+  style={
+    Object {
+      "backgroundColor": "#fff",
+      "borderBottomColor": "#f5f5f5",
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "alignItems": "center",
+        "borderBottomColor": "#f5f5f5",
+        "borderBottomWidth": 1,
+        "flexDirection": "row",
+        "justifyContent": "flex-start",
+        "paddingLeft": 24,
+        "paddingVertical": 16,
+      }
+    }
+  >
+    <View>
+      <Image
+        source={
+          Object {
+            "uri": "https://media.s-bol.com/BgzwB02ADm5k/550x498.jpg",
+          }
+        }
+        style={
+          Object {
+            "height": 40,
+            "marginRight": 16,
+            "width": 40,
+          }
+        }
+      />
+    </View>
+    <View>
+      <Text
+        style={
+          Object {
+            "color": "#200740",
+            "fontFamily": "kulimpark-bold",
+          }
+        }
+      >
+        The Divine Feminine
+      </Text>
+      <Text
+        style={
+          Object {
+            "color": "#8D819D",
+            "fontFamily": "kulimpark-regular",
+          }
+        }
+      >
+        Mac Miller
+      </Text>
+    </View>
+  </View>
+</View>
+`;

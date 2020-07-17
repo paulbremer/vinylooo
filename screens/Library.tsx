@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import CustomIcon from '../components/CustomIcon'
-import AlbumListItem from '../components/AlbumListItem'
+import AlbumListItem from '../components/AlbumListItem/AlbumListItem'
 import * as albumsActions from '../store/actions/albums'
 
 const LibraryScreen = ({ navigation: { navigate } }) => {

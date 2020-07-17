@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { useSelector } from 'react-redux'
-import AlbumListItem from '../components/AlbumListItem'
+import AlbumListItem from '../components/AlbumListItem/AlbumListItem'
 
 const Feed = () => {
     const albums = useSelector((state) => state.albums.albums)
