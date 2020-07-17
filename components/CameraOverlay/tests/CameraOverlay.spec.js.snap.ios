@@ -1,0 +1,327 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CameraOverlay /> should match snapshot 1`] = `
+<View
+  style={
+    Object {
+      "justifyContent": "space-between",
+    }
+  }
+>
+  <View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+    </View>
+  </View>
+  <View
+    style={
+      Object {
+        "flexDirection": "row",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "borderColor": "#fff",
+          "borderRadius": 100,
+          "borderWidth": 16,
+          "height": 150,
+          "opacity": 0.6,
+          "transform": Array [
+            Object {
+              "scale": 1,
+            },
+          ],
+          "width": 150,
+        }
+      }
+    />
+  </View>
+  <View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+    </View>
+  </View>
+</View>
+`;
+
+exports[`<CameraOverlay /> should match snapshot while loading is false 1`] = `
+<View
+  style={
+    Object {
+      "justifyContent": "space-between",
+    }
+  }
+>
+  <View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+    </View>
+  </View>
+  <View
+    style={
+      Object {
+        "flexDirection": "row",
+        "justifyContent": "center",
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "borderColor": "#fff",
+          "borderRadius": 100,
+          "borderWidth": 16,
+          "height": 150,
+          "opacity": 0.6,
+          "transform": Array [],
+          "width": 150,
+        }
+      }
+    />
+  </View>
+  <View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "height": 275,
+            "opacity": 0.6,
+          }
+        }
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "alignContent": "space-between",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": 690,
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+      <View
+        style={
+          Object {
+            "borderColor": "#fff",
+            "borderWidth": 2,
+            "opacity": 0.6,
+            "width": 275,
+          }
+        }
+      />
+    </View>
+  </View>
+</View>
+`;

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Colors from '../constants/Colors'
 import CustomIcon from '../components/CustomIcon'
-import CameraOverlay from '../components/CameraOverlay'
+import CameraOverlay from '../components/CameraOverlay/CameraOverlay'
 import * as albumsAction from '../store/actions/albums'
 import * as wantlistAction from '../store/actions/wantlist'
 
