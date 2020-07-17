@@ -27,6 +27,9 @@
       "supportsTablet": true,
       "userInterfaceStyle": "automatic"
     },
-    "description": ""
+    "description": "",
+    "android": {
+      "package": "com.paulbremer.vinylooo"
+    }
   }
 }

@@ -1,78 +1,84 @@
-import React, { useEffect, useRef } from "react";
-import { Animated, View, Dimensions } from "react-native";
+import React, { useEffect, useRef } from 'react'
+import { Animated, View, Dimensions } from 'react-native'
 
-const screenWidth = Math.round(Dimensions.get("window").width);
+const screenWidth = Math.round(Dimensions.get('window').width)
 
 const usePulse = (startDelay = 500) => {
-    const scale = useRef(new Animated.Value(1)).current;
+    const scale = useRef(new Animated.Value(1)).current
 
     const pulse = () => {
         Animated.sequence([
-            Animated.timing(scale, { toValue: 1.3 }),
-            Animated.timing(scale, { toValue: 0.8 })
-        ]).start(() => pulse());
-    };
+            Animated.timing(scale, { toValue: 1.3, useNativeDriver: true }),
+            Animated.timing(scale, { toValue: 0.8, useNativeDriver: true })
+        ]).start(() => pulse())
+    }
 
     useEffect(() => {
-        const timeout = setTimeout(() => pulse(), startDelay);
-        return () => clearTimeout(timeout);
-    }, []);
+        const timeout = setTimeout(() => pulse(), startDelay)
+        return () => clearTimeout(timeout)
+    }, [])
 
-    return scale;
-};
+    return scale
+}
 
 const CameraOverlay = ({ loading }) => {
-    const scale = usePulse();
+    const scale = usePulse()
 
     return (
-        <View style={{ justifyContent: "space-between" }}>
+        <View style={{ justifyContent: 'space-between' }}>
             <View>
                 <View
                     style={{
                         width: screenWidth - 60,
-                        flexDirection: "row",
-                        alignContent: "space-between",
-                        justifyContent: "space-between"
-                    }}>
+                        flexDirection: 'row',
+                        alignContent: 'space-between',
+                        justifyContent: 'space-between'
+                    }}
+                >
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             width: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             width: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                 </View>
                 <View
                     style={{
                         width: screenWidth - 60,
-                        flexDirection: "row",
-                        alignContent: "space-between",
-                        justifyContent: "space-between"
-                    }}>
+                        flexDirection: 'row',
+                        alignContent: 'space-between',
+                        justifyContent: 'space-between'
+                    }}
+                >
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             height: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             height: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                 </View>
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                 <Animated.View
                     style={[
                         {
@@ -80,7 +86,7 @@ const CameraOverlay = ({ loading }) => {
                             height: 150,
                             borderRadius: 100,
                             borderWidth: 16,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             opacity: 0.6,
                             transform: loading ? [{ scale }] : []
                         }
@@ -91,50 +97,56 @@ const CameraOverlay = ({ loading }) => {
                 <View
                     style={{
                         width: screenWidth - 60,
-                        flexDirection: "row",
-                        alignContent: "space-between",
-                        justifyContent: "space-between"
-                    }}>
+                        flexDirection: 'row',
+                        alignContent: 'space-between',
+                        justifyContent: 'space-between'
+                    }}
+                >
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             height: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             height: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                 </View>
                 <View
                     style={{
                         width: screenWidth - 60,
-                        flexDirection: "row",
-                        alignContent: "space-between",
-                        justifyContent: "space-between"
-                    }}>
+                        flexDirection: 'row',
+                        alignContent: 'space-between',
+                        justifyContent: 'space-between'
+                    }}
+                >
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             width: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                     <View
                         style={{
                             borderWidth: 2,
-                            borderColor: "#fff",
+                            borderColor: '#fff',
                             width: screenWidth / 2 - 100,
                             opacity: 0.6
-                        }}></View>
+                        }}
+                    ></View>
                 </View>
             </View>
         </View>
-    );
-};
+    )
+}
 
-export default CameraOverlay;
+export default CameraOverlay

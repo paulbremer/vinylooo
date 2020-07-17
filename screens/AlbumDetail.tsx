@@ -32,7 +32,8 @@ const AlbumDetail = ({ route }) => {
         Animated.timing(rotate, {
             toValue: 2,
             duration: 2000,
-            easing: Easing.linear
+            easing: Easing.linear,
+            useNativeDriver: true
         }).start(() => {})
     }, [])
 
