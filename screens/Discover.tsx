@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ScrollView, View, Text } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
-import DiscoverAlbum from '../components/DiscoverAlbum'
+import DiscoverAlbum from '../components/DiscoverAlbum/DiscoverAlbum'
 import * as albumsActions from '../store/actions/albums'
 
 const Discover = () => {
@@ -76,6 +76,7 @@ const Discover = () => {
             <ScrollView horizontal={true}>
                 {relatedArtists &&
                     relatedArtists.map((artist) => {
+                        console.log(artist.albumGroups.main[0])
                         return <DiscoverAlbum key={artist.id} albumId={artist.albumGroups.main[0]} />
                     })}
             </ScrollView>

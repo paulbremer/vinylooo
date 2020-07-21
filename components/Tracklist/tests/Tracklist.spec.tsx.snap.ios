@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Tracklist /> should match snapshot 1`] = `
+<View
+  style={
+    Object {
+      "padding": 24,
+      "paddingTop": 8,
+      "width": "100%",
+    }
+  }
+/>
+`;

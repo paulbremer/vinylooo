@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CustomTextInput /> should match snapshot 1`] = `
+<View
+  style={
+    Object {
+      "borderColor": "#ffffff",
+      "borderRadius": 4,
+      "borderWidth": 1,
+      "marginBottom": 20,
+    }
+  }
+>
+  <Text
+    style={
+      Object {
+        "backgroundColor": "#200740",
+        "color": "#000",
+        "left": 0,
+        "marginHorizontal": 12,
+        "paddingHorizontal": 4,
+        "position": "absolute",
+        "top": -8,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "backgroundColor": "#200740",
+          "color": "#ffffff",
+          "fontSize": 12,
+        }
+      }
+    />
+  </Text>
+  <TextInput
+    allowFontScaling={true}
+    onBlur={[Function]}
+    onFocus={[Function]}
+    rejectResponderTermination={true}
+    style={
+      Object {
+        "color": "#ffffff",
+        "paddingHorizontal": 16,
+        "paddingVertical": 16,
+      }
+    }
+    underlineColorAndroid="transparent"
+  />
+</View>
+`;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { View, Text, Image, Easing, Animated, ScrollView, Dimensions, StyleSheet } from 'react-native'
-import Tracklist from '../components/Tracklist'
-import CustomIcon from '../components/CustomIcon'
+import Tracklist from '../components/Tracklist/Tracklist'
+import CustomIcon from '../components/CustomIcon/CustomIcon'
 import colors from '../constants/Colors'
 
 const screenWidth = Math.round(Dimensions.get('window').width)

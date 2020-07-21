@@ -6,7 +6,7 @@ import { DrawerActions } from '@react-navigation/native'
 import AlbumDetail from '../screens/AlbumDetail'
 import Wantlist from '../screens/Wantlist'
 import Sorting from '../screens/Sorting'
-import CustomIcon from '../components/CustomIcon'
+import CustomIcon from '../components/CustomIcon/CustomIcon'
 import Colors from '../constants/Colors'
 
 const WantlistDrawer = createDrawerNavigator()
