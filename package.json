@@ -35,7 +35,7 @@
     "react-native-swipe-list-view": "3.2.3",
     "react-native-testing-library": "2.1.1",
     "react-native-vector-icons": "7.0.0",
-    "react-native-web": "0.13.3",
+    "react-native-web": "0.13.4",
     "react-redux": "7.2.0",
     "react-spring": "8.0.27",
     "redux": "4.0.5",
