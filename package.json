@@ -33,7 +33,7 @@
     "react-native-svg": "12.1.0",
     "react-native-svg-icon": "0.8.1",
     "react-native-swipe-list-view": "3.2.3",
-    "react-native-testing-library": "2.1.1",
+    "react-native-testing-library": "2.2.0",
     "react-native-vector-icons": "7.0.0",
     "react-native-web": "~0.11.7",
     "react-redux": "7.2.1",
