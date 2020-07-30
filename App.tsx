@@ -21,6 +21,8 @@ import albumsReducer from './store/reducers/albums'
 import wantlistReducer from './store/reducers/wantlist'
 import { init } from './helpers/db'
 
+require('react-native').unstable_enableLogBox()
+
 init()
     .then(() => {
         console.log('Initialized database')

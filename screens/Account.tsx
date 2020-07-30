@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import * as AuthSession from 'expo-auth-session'
-import { Text, Image, View, TouchableOpacity, AsyncStorage } from 'react-native'
+import { Text, Image, View, FlatList, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native'
 import makeid from '../helpers/nonce'
 import { storeData, storeObject } from '../helpers/storeData'
+import CustomIcon from '../components/CustomIcon/CustomIcon'
 
 const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
 const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
@@ -71,9 +72,9 @@ const AccountScreen = () => {
                         10
                     )}", oauth_token="${
                         results.params.oauth_token
-                    }", oauth_signature="${CONSUMER_SECRET}&${requestTokenSecret}", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_verifier="${
+                        }", oauth_signature="${CONSUMER_SECRET}&${requestTokenSecret}", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_verifier="${
                         results.params.oauth_verifier
-                    }"`
+                        }"`
                 }
             })
                 .then(async (response) => {
@@ -189,13 +190,30 @@ const AccountScreen = () => {
         storeObject('userData', {})
     }
 
+    const accountList = [
+        {
+            id: '1',
+            title: 'Terms of Service',
+        },
+        {
+            id: '2',
+            title: 'Log out',
+            function: logOut
+        },
+    ];
+
+    const Item = ({ title, itemFunction }) => (
+        <TouchableOpacity style={styles.listItem} onPress={itemFunction}>
+            <Text style={styles.listText}>{title}</Text>
+            <CustomIcon name="link" color="#000000" style={{ marginLeft: 24 }} />
+        </TouchableOpacity>
+    );
+
     return (
         <View
             style={{
                 flex: 1,
                 justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: 24,
                 backgroundColor: '#fcfcfc'
             }}
         >
@@ -208,31 +226,60 @@ const AccountScreen = () => {
             <View>
                 {Object.keys(userInfo).length !== 0 && (
                     <>
-                        <View style={{ marginBottom: 50 }}>
-                            <Text>{userInfo.username}</Text>
+                        <View style={{
+                            marginBottom: 24, alignItems: 'center', padding: 24,
+                        }}>
                             <Image
-                                style={{ width: 150, height: 150, borderRadius: 150 }}
+                                style={{ width: 150, height: 150, borderRadius: 150, marginBottom: 24 }}
                                 source={{ uri: userInfo.avatar_url }}
                             />
+                            <Text style={styles.username}>{userInfo.username}</Text>
                         </View>
-                        <Text>id: {userInfo.id}</Text>
-                        <Text>location: {userInfo.location}</Text>
-                        <Text>releases_rated: {userInfo.releases_rated}</Text>
-                        <Text>rating_avg: {userInfo.rating_avg}</Text>
-                        <Text>num_collection: {userInfo.num_collection}</Text>
-                        <Text>num_wantlist: {userInfo.num_wantlist}</Text>
-                        {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
 
-                        <TouchableOpacity onPress={logOut}>
-                            <Text>Log Out</Text>
-                        </TouchableOpacity>
+                        {accountList.map(listItem => <Item key={listItem.id} title={listItem.title} itemFunction={listItem.function} />)}
+
+                        {/* <Text>id: {userInfo.id}</Text>
+                            <Text>location: {userInfo.location}</Text>
+                            <Text>releases_rated: {userInfo.releases_rated}</Text>
+                            <Text>rating_avg: {userInfo.rating_avg}</Text>
+                            <Text>num_collection: {userInfo.num_collection}</Text>
+                            <Text>num_wantlist: {userInfo.num_wantlist}</Text>
+                            {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
+                        */}
                     </>
                 )}
             </View>
 
-            <Text>Version 0.15</Text>
+            <Text style={styles.version}>Version 0.15</Text>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    username: {
+        fontFamily: 'kulimpark-regular',
+        fontSize: 18
+    },
+    listContainer: {
+        width: '100%'
+    },
+    listItem: {
+        backgroundColor: '#fff',
+        padding: 24,
+        justifyContent: 'space-between',
+        flexDirection: 'row',
+        borderBottomColor: '#f5f5f5',
+        borderBottomWidth: 1,
+    },
+    listText: {
+        color: '#000',
+        fontFamily: 'kulimpark-regular'
+    },
+    version: {
+        textAlign: 'center',
+        padding: 24,
+        fontFamily: 'kulimpark-regular'
+    }
+})
 
 export default AccountScreen
