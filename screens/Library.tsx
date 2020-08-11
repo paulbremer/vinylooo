@@ -3,6 +3,7 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux'
 import { useColorScheme } from 'react-native-appearance'
 import { SwipeListView } from 'react-native-swipe-list-view'
+import Loader from '../components/Loader/Loader'
 import CustomIcon from '../components/CustomIcon/CustomIcon'
 import AlbumListItem from '../components/AlbumListItem/AlbumListItem'
 import * as albumsActions from '../store/actions/albums'
@@ -36,6 +37,10 @@ const LibraryScreen = ({ navigation: { navigate } }) => {
         if (value < -200) {
             deleteRow({}, key)
         }
+    }
+
+    if (albums.length === 0) {
+        return <Loader />
     }
 
     return (

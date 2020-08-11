@@ -3,6 +3,7 @@ import * as AuthSession from 'expo-auth-session'
 import { Text, Image, View, FlatList, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native'
 import makeid from '../helpers/nonce'
 import { storeData, storeObject } from '../helpers/storeData'
+import Loader from '../components/Loader/Loader'
 import CustomIcon from '../components/CustomIcon/CustomIcon'
 
 const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
@@ -11,6 +12,7 @@ const timestamp = Date.now()
 
 const AccountScreen = () => {
     const [userInfo, setUserInfo] = useState({})
+    const [loadedUserInfo, setLoadedUserInfo] = useState(false)
     const [collectionValue, setCollectionValue] = useState({})
     const [requestToken, setRequestToken] = useState('')
     const [requestTokenSecret, setRequestTokenSecret] = useState('')
@@ -149,6 +151,7 @@ const AccountScreen = () => {
                         console.log('💪🏼 ', json.username)
                         storeObject('userData', json)
                         setUserInfo({ ...json, ...userInfo })
+                        setLoadedUserInfo(true)
                         getCollectionValue(token, secret)
                     })
                     .catch((err) => console.error(err))
@@ -209,6 +212,10 @@ const AccountScreen = () => {
         </TouchableOpacity>
     );
 
+    if (!loadedUserInfo) {
+        return <Loader />
+    }
+
     return (
         <View
             style={{
@@ -250,7 +257,7 @@ const AccountScreen = () => {
                 )}
             </View>
 
-            <Text style={styles.version}>Version 0.15</Text>
+            <Text style={styles.version}>Version 0.16</Text>
         </View>
     )
 }

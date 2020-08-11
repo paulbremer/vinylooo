@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, ScrollView, StyleSheet } from 'react-native'
 import { useSelector } from 'react-redux'
+import Loader from '../components/Loader/Loader'
 import AlbumListItem from '../components/AlbumListItem/AlbumListItem'
 
 const Feed = () => {
@@ -9,7 +10,17 @@ const Feed = () => {
 
     const newWantlist = wantlist.albums.map((album) => (album = { ...album, wantlist: true }))
     const feedArray = [...albums, ...newWantlist]
-    const sortedFeed = feedArray.sort((a, b) => b.date_added.localeCompare(a.date_added))
+    const sortedFeed = feedArray.sort((a, b) => {
+        if (b.date_added.localeCompare !== undefined) {
+            b.date_added.localeCompare(a.date_added)
+        } else {
+            return a.date_added
+        }
+    })
+
+    if (sortedFeed.length === 0) {
+        return <Loader />
+    }
 
     return (
         <ScrollView>
@@ -27,8 +38,8 @@ const Feed = () => {
                         artist={album.basic_information.artists[0].name}
                         title={album.basic_information.title}
                         image={album.basic_information.cover_image}
-                        onPress={() => {}}
-                        // onPress={() => navigate('Details', { album: item })}
+                        onPress={() => { }}
+                    // onPress={() => navigate('Details', { album: item })}
                     />
                 </View>
             ))}

@@ -32,6 +32,8 @@ export default (state = initialState, action) => {
                     date_added: timestamp
                 }
             ]
+            console.log('😅 ', timestamp)
+            console.log('🔥 ', new Date(timestamp))
             let newAlbumArray
             if (state.sorting === 'date') {
                 newAlbumArray = newAlbum.concat(state.albums)

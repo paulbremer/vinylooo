@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { View, Text, Image, Easing, Animated, ScrollView, Dimensions, StyleSheet } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, Image, ScrollView, Dimensions, StyleSheet } from 'react-native'
+import Loader from '../components/Loader/Loader'
 import Tracklist from '../components/Tracklist/Tracklist'
-import CustomIcon from '../components/CustomIcon/CustomIcon'
-import colors from '../constants/Colors'
 
 const screenWidth = Math.round(Dimensions.get('window').width)
 
@@ -19,22 +18,8 @@ const AlbumDetail = ({ route }) => {
     const [albumDetail, setAlbumDetail] = useState({})
     const [loading, setLoading] = useState(true)
 
-    const rotate = useRef(new Animated.Value(1)).current
-    const RotateData = rotate.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '720deg']
-    })
-
     useEffect(() => {
         fetchAlbumDetails()
-
-        rotate.setValue(0)
-        Animated.timing(rotate, {
-            toValue: 2,
-            duration: 2000,
-            easing: Easing.linear,
-            useNativeDriver: true
-        }).start(() => {})
     }, [])
 
     const fetchAlbumDetails = () => {
@@ -58,29 +43,7 @@ const AlbumDetail = ({ route }) => {
     }
 
     if (loading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                }}
-            >
-                <Animated.View
-                    style={[
-                        {
-                            borderRadius: 100,
-                            borderWidth: 16,
-                            borderColor: '#fff',
-                            opacity: 0.6,
-                            transform: [{ rotate: RotateData }]
-                        }
-                    ]}
-                >
-                    <CustomIcon name="lp" color={colors.primaryColor} style={{ fontSize: 128 }} />
-                </Animated.View>
-            </View>
-        )
+        return (<Loader />)
     }
 
     // console.log('😍 ', albumDetail)
