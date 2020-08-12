@@ -2,11 +2,11 @@
   "extends": [
     "config:base"
   ],
-  // "ignoreDeps": [
-  //   "expo",
-  //   "expo-auth-session",
-  //   "expo-camera",
-  //   "expo-file-system",
-  //   "jest-expo"
-  // ]
+  "ignoreDeps": [
+    "expo",
+    "expo-auth-session",
+    "expo-camera",
+    "expo-file-system",
+    "jest-expo"
+  ]
 }
