@@ -8502,10 +8502,10 @@ react-native-svg@12.1.0:
     css-select "^2.1.0"
     css-tree "^1.0.0-alpha.39"
 
-react-native-swipe-list-view@3.2.4:
-  version "3.2.4"
-  resolved "https://registry.yarnpkg.com/react-native-swipe-list-view/-/react-native-swipe-list-view-3.2.4.tgz#b854b7694484b8a95c88f179510f33379ccffe21"
-  integrity sha512-vKx6lfGRuhPOqa6mKBZPGRNMua7mMPSByKnZBNxdvNYpeEtgjJLWnQWJM3gRkgSuR6asaMrWEYGW8weZ8rRSIQ==
+react-native-swipe-list-view@3.2.5:
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-list-view/-/react-native-swipe-list-view-3.2.5.tgz#e10297ae53c9df79a5ef93bd01f47c47ad5dc23b"
+  integrity sha512-WWXUO7rF4UD+Mu49ZKghK6wrcSREAHni6w5km5j4AqCJh8YypVvmfV2byVLTvWPzDosdxQmh/DXQHsKlnLR3uQ==
 
 react-native-testing-library@2.2.0:
   version "2.2.0"
