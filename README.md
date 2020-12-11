@@ -10,3 +10,5 @@ Option to sync all the data to Discogs (https://www.discogs.com/) or fetch alrea
 
 
 ![Vinylooo Preview](/assets/vinyloo2.png)
+
+<iframe src="https://app.productstash.io/roadmaps/5fd35aa2c87b430029004507/public" height="900" width="100%" frameborder="0"></iframe>
