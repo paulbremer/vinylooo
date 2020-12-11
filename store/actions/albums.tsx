@@ -61,18 +61,6 @@ export const addAlbum = (album) => {
                 })
             } else {
                 console.log('not connected to discogs')
-
-                dispatch({
-                    type: ADD_ALBUM,
-                    albumData: {
-                        id: dbResult.insertId,
-                        discogsId: id,
-                        addedAt: timestamp,
-                        title: albumTitle,
-                        artist: albumArtist,
-                        cover_image
-                    }
-                })
             }
         } catch (err) {
             console.error(err)

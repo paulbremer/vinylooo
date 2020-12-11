@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import * as AuthSession from 'expo-auth-session'
 import Toast from 'react-native-toast-message'
 import { Text, Image, View, FlatList, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native'
@@ -6,6 +6,7 @@ import makeid from '../helpers/nonce'
 import { storeData, storeObject } from '../helpers/storeData'
 import Loader from '../components/Loader/Loader'
 import CustomIcon from '../components/CustomIcon/CustomIcon'
+import { AuthContext } from '../utils/authContext';
 
 const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
 const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
@@ -17,6 +18,8 @@ const AccountScreen = () => {
     const [collectionValue, setCollectionValue] = useState({})
     const [requestToken, setRequestToken] = useState('')
     const [requestTokenSecret, setRequestTokenSecret] = useState('')
+
+    const { signOut } = useContext(AuthContext);
 
     useEffect(() => {
         const getToken = async () => {
@@ -188,15 +191,6 @@ const AccountScreen = () => {
         }
     }
 
-    const logOut = () => {
-        setUserInfo({})
-        setCollectionValue({})
-        storeData('token', '')
-        storeData('secret', '')
-        storeData('username', '')
-        storeObject('userData', {})
-    }
-
     const accountList = [
         {
             id: '1',
@@ -205,7 +199,7 @@ const AccountScreen = () => {
         {
             id: '2',
             title: 'Log out',
-            function: logOut
+            function: signOut
         },
     ];
 
@@ -225,13 +219,6 @@ const AccountScreen = () => {
     }
 
 
-    if (!loadedUserInfo) {
-        return <View>
-            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-            <Loader />
-        </View>
-    }
-
     return (
         <View
             style={{
@@ -240,28 +227,27 @@ const AccountScreen = () => {
                 backgroundColor: '#fcfcfc'
             }}
         >
-            {Object.keys(userInfo).length === 0 && (
+            {/* {Object.keys(userInfo).length === 0 && (
                 <TouchableOpacity onPress={handleDiscogsLogin} disabled={requestToken ? false : true}>
                     <Text>Login with Discogs</Text>
                 </TouchableOpacity>
-            )}
+            )} */}
 
             <View>
-                {Object.keys(userInfo).length !== 0 && (
-                    <>
-                        <View style={{
-                            marginBottom: 24, alignItems: 'center', padding: 24,
-                        }}>
-                            <Image
+                <>
+                    <View style={{
+                        marginBottom: 24, alignItems: 'center', padding: 24,
+                    }}>
+                        {/* <Image
                                 style={{ width: 150, height: 150, borderRadius: 150, marginBottom: 24 }}
                                 source={{ uri: userInfo.avatar_url }}
-                            />
-                            <Text style={styles.username}>{userInfo.username}</Text>
-                        </View>
+                            /> */}
+                        {/* <Text style={styles.username}>{userInfo.username}</Text> */}
+                    </View>
 
-                        {accountList.map(listItem => <Item key={listItem.id} title={listItem.title} itemFunction={listItem.function} />)}
+                    {accountList.map(listItem => <Item key={listItem.id} title={listItem.title} itemFunction={listItem.function} />)}
 
-                        {/* <Text>id: {userInfo.id}</Text>
+                    {/* <Text>id: {userInfo.id}</Text>
                             <Text>location: {userInfo.location}</Text>
                             <Text>releases_rated: {userInfo.releases_rated}</Text>
                             <Text>rating_avg: {userInfo.rating_avg}</Text>
@@ -269,11 +255,10 @@ const AccountScreen = () => {
                             <Text>num_wantlist: {userInfo.num_wantlist}</Text>
                             {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
                         */}
-                    </>
-                )}
+                </>
             </View>
 
-            <Text style={styles.version}>Version 0.16</Text>
+            <Text style={styles.version}>Version 0.17</Text>
         </View>
     )
 }
