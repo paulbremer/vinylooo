@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import * as AuthSession from 'expo-auth-session'
+import Toast from 'react-native-toast-message'
 import { Text, Image, View, FlatList, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native'
 import makeid from '../helpers/nonce'
 import { storeData, storeObject } from '../helpers/storeData'
@@ -46,11 +47,14 @@ const AccountScreen = () => {
         const fetchUserData = async () => {
             const token = await AsyncStorage.getItem('token')
             const secret = await AsyncStorage.getItem('secret')
+            console.log('😎 fetchUserData', token, secret)
             if (token !== null && secret !== null) {
                 console.log('😎 user has token')
                 setRequestToken(token)
                 setRequestTokenSecret(secret)
                 getIdentity(token, secret)
+            } else {
+                getIdentity(requestToken, requestTokenSecret)
             }
         }
         fetchUserData()
@@ -72,10 +76,8 @@ const AccountScreen = () => {
                     'Content-type': 'application/x-www-form-urlencoded',
                     Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}", oauth_nonce="${makeid(
                         10
-                    )}", oauth_token="${
-                        results.params.oauth_token
-                        }", oauth_signature="${CONSUMER_SECRET}&${requestTokenSecret}", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_verifier="${
-                        results.params.oauth_verifier
+                    )}", oauth_token="${results.params.oauth_token
+                        }", oauth_signature="${CONSUMER_SECRET}&${requestTokenSecret}", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_verifier="${results.params.oauth_verifier
                         }"`
                 }
             })
@@ -122,8 +124,10 @@ const AccountScreen = () => {
                             getUserInfo(token, secret)
                         } else {
                             console.log('heb geen username dus')
+                            Toast.show({ type: 'error', text1: 'No user found', text2: 'This is some something 👋', visibilityTime: 4000, })
                             storeData('token', '')
                             storeData('secret', '')
+
                         }
                     })
                     .catch((err) => console.log(err))
@@ -212,8 +216,20 @@ const AccountScreen = () => {
         </TouchableOpacity>
     );
 
+    const toastConfig = {
+        'error': (internalState) => (
+            <View style={{ backgroundColor: '#000000', padding: 12, borderRadius: 8, minWidth: '80%', textAlign: 'center ' }}>
+                <Text style={{ color: '#ffffff' }}>{internalState.text1}</Text>
+            </View>
+        ),
+    }
+
+
     if (!loadedUserInfo) {
-        return <Loader />
+        return <View>
+            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+            <Loader />
+        </View>
     }
 
     return (
