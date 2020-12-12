@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useMemo, useReducer, useContext, createContext } from 'react'
+import React, { useState, useEffect, useMemo, useReducer, useContext } from 'react'
 import * as Font from 'expo-font'
+import * as AuthSession from 'expo-auth-session'
 import ReduxThunk from 'redux-thunk'
 import { Provider } from 'react-redux'
-import { AsyncStorage, Text, View, Button } from 'react-native'
+import { Text, View, Button } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
 import Toast from 'react-native-toast-message'
 import { AppearanceProvider } from 'react-native-appearance'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
@@ -16,16 +18,23 @@ import WantlistStackScreen from './navigation/WantlistStackScreen'
 import DiscoverStackScreen from './navigation/DiscoverStackScreen'
 import AccountStackScreen from './navigation/AccountStackScreen'
 import CustomIcon from './components/CustomIcon/CustomIcon'
+import ErrorNotification from './components/Notifications/ErrorNotification'
 import AddAlbum from './screens/AddAlbum'
 import AddAlbumManually from './screens/AddAlbumManually'
 import Colors from './constants/Colors'
 import albumsReducer from './store/reducers/albums'
 import wantlistReducer from './store/reducers/wantlist'
 import { init } from './helpers/db'
+import { getData, storeData, removeData, storeObject } from './helpers/storeData'
+import makeid from './helpers/nonce'
 
 import { AuthContext } from './utils/authContext';
 
 require('react-native').unstable_enableLogBox()
+
+const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
+const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
+const timestamp = Date.now()
 
 init()
     .then(() => {
@@ -55,33 +64,6 @@ const MyTheme = {
         primary: Colors.primaryColor
     }
 }
-
-// const AuthContext = createContext({});
-
-
-// const authContext = (
-//     () => ({
-//         signIn: async data => {
-//             // In a production app, we need to send some data (usually username, password) to server and get a token
-//             // We will also need to handle errors if sign in failed
-//             // After getting token, we need to persist the token using `AsyncStorage`
-//             // In the example, we'll use a dummy token
-
-//             dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
-//         },
-//         signOut: () => dispatch({ type: 'SIGN_OUT' }),
-//         signUp: async data => {
-//             // In a production app, we need to send user data to server and get a token
-//             // We will also need to handle errors if sign up failed
-//             // After getting token, we need to persist the token using `AsyncStorage`
-//             // In the example, we'll use a dummy token
-
-//             dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
-//         },
-//     }),
-//     []
-// );
-
 
 const ScanAlbumScreen = () => {
     return (
@@ -208,26 +190,20 @@ function SplashScreen() {
     );
 }
 
-function HomeScreen() {
-    const { signOut } = useContext(AuthContext);
-
-    return (
-        <View>
-            <Text>Signed in!</Text>
-            <Button title="Sign out" onPress={signOut} />
-        </View>
-    );
-}
-
 function ConnectScreen() {
-    const [username, setUsername] = React.useState('');
-    const [password, setPassword] = React.useState('');
+    const { authDiscogs } = useContext(AuthContext);
 
-    const { signIn } = useContext(AuthContext);
+    const toastConfig = {
+        'error': (internalState) => <ErrorNotification>{internalState.text1}</ErrorNotification>
+    }
 
     return (
-        <View>
-            <Button title="Connect Discogs account" onPress={() => signIn({ username, password })} />
+        <View style={{ height: '100%' }}>
+            <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+            {/* <Button title="Sign out 2" onPress={() => Toast.show({ type: 'error', position: 'bottom', text1: 'No user found', text2: 'This is some something 👋', visibilityTime: 4000, })} /> */}
+
+            <Button title="Connect Discogs account" onPress={() => authDiscogs()} />
         </View>
     );
 }
@@ -241,54 +217,64 @@ export default function App() {
                 case 'RESTORE_TOKEN':
                     return {
                         ...prevState,
-                        userToken: action.token,
+                        requestToken: action.requestToken,
+                        requestTokenSecret: action.requestTokenSecret,
+                        authToken: action.token,
+                        authTokenSecret: action.tokenSecret,
+                        userData: action.userData,
                         isLoading: false,
                     };
-                case 'SIGN_IN':
+                case 'AUTH_DISCOGS_INIT':
                     return {
                         ...prevState,
-                        isSignout: false,
-                        userToken: action.token,
+                        isLoading: true,
+                    };
+                case 'AUTH_DISCOGS_SUCCESS':
+                    return {
+                        ...prevState,
+                        requestToken: null,
+                        requestTokenSecret: null,
+                        authToken: action.authToken,
+                        authTokenSecret: action.authTokenSecret,
+                        isSignedIn: true,
+                        isLoading: false,
+                    };
+                case 'AUTH_DISCOGS_ERROR':
+                    return {
+                        ...prevState,
+                        requestToken: null,
+                        requestTokenSecret: null,
+                        authToken: null,
+                        authTokenSecret: null,
+                        userData: null,
+                        isLoading: false,
                     };
                 case 'SIGN_OUT':
                     return {
                         ...prevState,
-                        isSignout: true,
-                        userToken: null,
+                        isSignedIn: false,
+                        requestToken: action.requestToken,
+                        requestTokenSecret: action.requestTokenSecret,
+                        authToken: null,
+                        authTokenSecret: null,
+                        userData: null,
                     };
             }
         },
         {
             isLoading: true,
-            isSignout: false,
-            userToken: null,
+            isSignedIn: false,
+            requestToken: null,
+            requestTokenSecret: null,
+            authToken: null,
+            authTokenSecret: null,
+            userData: null,
         }
     );
 
     const [fontsLoaded, setFontsLoaded] = useState(false)
 
     useEffect(() => {
-        // Fetch the token from storage then navigate to our appropriate place
-        const bootstrapAsync = async () => {
-            let userToken;
-
-            console.log('x bootstrapAsync ', userToken)
-
-            try {
-                userToken = await AsyncStorage.getItem('userToken');
-            } catch (e) {
-                // Restoring token failed
-            }
-
-            // After restoring token, we may need to validate it in production apps
-
-            // This will switch to the App screen or Auth screen and this loading
-            // screen will be unmounted and thrown away.
-            dispatch({ type: 'RESTORE_TOKEN', token: userToken });
-        };
-
-        bootstrapAsync();
-
         const loadFonts = async () => {
             await Font.loadAsync({
                 icomoon: require('./assets/fonts/icomoon.ttf'),
@@ -299,57 +285,236 @@ export default function App() {
             setFontsLoaded(true)
         }
         loadFonts()
+
+        // Fetch the token from storage then navigate to our appropriate place
+        const bootstrapAsync = async () => {
+            let requestToken;
+            let requestTokenSecret;
+            let authToken;
+            let authTokenSecret;
+            let userData;
+
+            try {
+                requestToken = await AsyncStorage.getItem('requestToken');
+                requestTokenSecret = await AsyncStorage.getItem('requestTokenSecret');
+                authToken = await AsyncStorage.getItem('authToken');
+                authTokenSecret = await AsyncStorage.getItem('authTokenSecret');
+                userData = await AsyncStorage.getItem('userData');
+            } catch (e) {
+                // Restoring token failed
+            }
+
+            if (!requestToken) {
+                getDiscogsToken();
+            }
+
+            dispatch({ type: 'RESTORE_TOKEN', requestToken: requestToken, requestTokenSecret: requestTokenSecret, token: authToken, tokenSecret: authTokenSecret, userData: userData });
+        };
+
+        bootstrapAsync();
     }, [])
 
-    // if (!fontsLoaded) {
-    //     return (
-    //         <View>
-    //             <Text>loading...</Text>
-    //         </View>
-    //     )
-    // }
+    const getDiscogsToken = async () => {
+        let newToken;
+        let newTokenSecret;
+
+        const getToken = async () => {
+            let response = await fetch('https://api.discogs.com/oauth/request_token', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}", oauth_nonce="${makeid(
+                        10
+                    )}", oauth_signature="${CONSUMER_SECRET}&", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_callback="https://auth.expo.io/@paulbremer/vinylooo", oauth_callback_confirmed="true"`
+                }
+            })
+            let data = await response.text()
+            return data
+        }
+
+        // 2. SEND A GET REQUEST TO THE DISCOGS REQUEST TOKEN URL
+        await getToken()
+            .then(async (data) => {
+                console.log('getDiscogsToken 2# ', data)
+                const token = data.match('oauth_token=(.*)&oauth_token_secret')[1]
+                const tokenSecret = data.match('oauth_token_secret=(.*)&oauth_callback_confirmed=true')[1]
+                storeData('requestToken', token)
+                storeData('requestTokenSecret', tokenSecret)
+                newToken = token
+                newTokenSecret = tokenSecret
+            })
+            .catch((err) => console.log(err))
+
+        return { newToken, newTokenSecret }
+    }
+
+    const getIdentity = async (token, secret) => {
+        console.log('getIdentity', token, secret)
+
+        try {
+            if (token !== null && secret !== null) {
+                fetch('https://api.discogs.com/oauth/identity', {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded',
+                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${token}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
+                            10
+                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${secret}`
+                    }
+                })
+                    .then(async (data) => {
+                        let json = await data.json()
+                        if (json.username) {
+                            storeData('username', json.username)
+                            getUserInfo(token, secret)
+                        } else {
+                            console.log('heb geen username dus')
+                            Toast.show({ type: 'error', text1: 'No user found', text2: 'This is some something 👋', visibilityTime: 4000, })
+                            storeData('token', '')
+                            storeData('secret', '')
+                        }
+                    })
+                    .catch((err) => console.log(err))
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const getUserInfo = async (token, secret) => {
+        console.log('getUserInfo', token, secret)
+        try {
+            if (token !== null && secret !== null) {
+                fetch('https://api.discogs.com/users/paaaaaaaaaaul', {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded',
+                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${token}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
+                            10
+                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${secret}`
+                    }
+                })
+                    .then(async (data) => {
+                        let json = await data.json()
+                        console.log('💪🏼 ', json.username)
+                        storeObject('userData', json)
+                        // setUserInfo({ ...json, ...userInfo })
+                        // setLoadedUserInfo(true)
+                        // getCollectionValue(token, secret)
+                    })
+                    .catch((err) => console.error(err))
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const discogsAuth = async () => {
+        if (!state.requestToken) {
+            dispatch({ type: 'AUTH_DISCOGS_ERROR' })
+
+            getDiscogsToken();
+
+            Toast.show({
+                type: 'error', position: 'bottom', topOffset: 0,
+                bottomOffset: 0, text1: 'No requestToken', text2: 'This is broken, sorry 👋', visibilityTime: 4000,
+            })
+            return
+        }
+
+        // 3. REDIRECT YOUR USER TO THE DISCOGS AUTHORIZE PAGE
+        let results = await AuthSession.startAsync({
+            authUrl: `https://discogs.com/oauth/authorize?oauth_token=${state.requestToken}`
+        })
+
+        if (results.type === 'success') {
+            await fetch('https://api.discogs.com/oauth/access_token', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}", oauth_nonce="${makeid(
+                        10
+                    )}", oauth_token="${results.params.oauth_token
+                        }", oauth_signature="${CONSUMER_SECRET}&${state.requestTokenSecret}", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_verifier="${results.params.oauth_verifier
+                        }"`
+                }
+            })
+                .then(async (response) => {
+                    let data = await response.text()
+                    console.log('4# ', data)
+
+                    if (response.status === 200) {
+                        const finalToken = data.match('oauth_token=(.*)&oauth_token_secret')[1]
+                        const finalTokenSecret = data.match('oauth_token_secret=(.*)')[1]
+
+                        storeData('token', finalToken)
+                        storeData('secret', finalTokenSecret)
+                        await AsyncStorage.setItem('authToken', finalToken);
+                        await AsyncStorage.setItem('authTokenSecret', finalTokenSecret);
+
+                        await getIdentity(finalToken, finalTokenSecret)
+
+                        dispatch({ type: 'AUTH_DISCOGS_SUCCESS', authToken: finalToken, authTokenSecret: finalTokenSecret })
+                    }
+                })
+                .catch((err) => console.log(err))
+
+            // try {
+            //     await AsyncStorage.setItem('authToken', results.params.oauth_token);
+            // } catch (e) {
+            //     // Setting token failed
+            // }
+        } else {
+            dispatch({ type: 'AUTH_DISCOGS_ERROR' })
+        }
+    }
 
     // In a production app, we need to send some data (usually username, password) to server and get a token
     // We will also need to handle errors if sign in failed
     // After getting token, we need to persist the token using `AsyncStorage`
     const authContextValue = useMemo(
         () => ({
-            signIn: async data => {
-                // In a production app, we need to send some data (usually username, password) to server and get a token
-                // We will also need to handle errors if sign in failed
-                // After getting token, we need to persist the token using `AsyncStorage`
-                // In the example, we'll use a dummy token
-
-                dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+            authDiscogs: async () => {
+                dispatch({ type: 'AUTH_DISCOGS_INIT' })
+                await discogsAuth();
             },
-            signOut: () => dispatch({ type: 'SIGN_OUT' }),
-            signUp: async data => {
-                // In a production app, we need to send user data to server and get a token
-                // We will also need to handle errors if sign up failed
-                // After getting token, we need to persist the token using `AsyncStorage`
-                // In the example, we'll use a dummy token
+            signOut: async () => {
+                removeData('requestToken')
+                removeData('requestTokenSecret')
+                removeData('authToken')
+                removeData('authTokenSecret')
+                removeData('userData')
 
-                dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+                const { newToken, newTokenSecret } = await getDiscogsToken();
+
+                dispatch({ type: 'SIGN_OUT', requestToken: newToken, requestTokenSecret: newTokenSecret });
             },
         }),
-        [],
+        [state],
     );
+
+    if (!fontsLoaded) {
+        return (
+            <View>
+                <Text>loading...</Text>
+            </View>
+        )
+    }
 
     return (
         <AuthContext.Provider value={authContextValue}>
             <Provider store={store}>
                 <NavigationContainer>
                     <Stack.Navigator mode="modal">
-                        {console.log('xxx ', state.userToken)}
                         {state.isLoading ? (
                             <Stack.Screen name="Splash" component={SplashScreen} />
-                        ) : state.userToken == null ? (
+                        ) : state.authToken === null ? (
                             <Stack.Screen
                                 name="SignIn"
                                 component={ConnectScreen}
                                 options={{
                                     title: 'Connect',
-                                    animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                                    animationTypeForReplace: state.isSignedIn ? 'push' : 'pop',
                                 }}
                             />
                         ) : (
@@ -366,8 +531,6 @@ export default function App() {
 
         // <Provider store={store}>
         //     <AppearanceProvider>
-        //         {/* <NavigatorContainer /> */}
-
         //         <NavigationContainer theme={MyTheme}>
         //             <RootStack.Navigator mode="modal">
         //                 <RootStack.Screen name="Main" component={MainStackScreen} options={{ headerShown: false }} />
@@ -380,16 +543,5 @@ export default function App() {
         //         </NavigationContainer>
         //     </AppearanceProvider>
         // </Provider>
-
-        // <NavigationContainer theme={MyTheme}>
-        // <RootStack.Navigator mode="modal">
-        // <RootStack.Screen name="Main" component={MainStackScreen} options={{ headerShown: false }} />
-        // <RootStack.Screen
-        //     name="addAlbumModal"
-        //     component={ScanAlbumScreen}
-        //     options={{ headerShown: false }}
-        // />
-        // {/* </RootStack.Navigator> */ }
-        // </NavigationContainer>
     )
 }

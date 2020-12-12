@@ -146,12 +146,12 @@ export const setWantlist = () => {
 
             dispatch({ type: SET_WANTLIST, payload: json.wants })
         } else {
-            try {
-                const dbResult = await fetchWantlist()
-                dispatch({ type: SET_WANTLIST, payload: dbResult.rows._array })
-            } catch (err) {
-                throw err
-            }
+            // try {
+            //     const dbResult = await fetchWantlist()
+            //     dispatch({ type: SET_WANTLIST, payload: dbResult.rows._array })
+            // } catch (err) {
+            //     throw err
+            // }
         }
     }
 }

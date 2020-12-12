@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import * as AuthSession from 'expo-auth-session'
 import Toast from 'react-native-toast-message'
-import { Text, Image, View, FlatList, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native'
+import { Text, Image, View, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
+import AsyncStorage from '@react-native-community/async-storage'
 import makeid from '../helpers/nonce'
 import { storeData, storeObject } from '../helpers/storeData'
 import Loader from '../components/Loader/Loader'
@@ -13,54 +14,67 @@ const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
 const timestamp = Date.now()
 
 const AccountScreen = () => {
-    const [userInfo, setUserInfo] = useState({})
+    const [userInfo, setUserInfo] = useState({ id: undefined, username: undefined, avatar_url: undefined })
     const [loadedUserInfo, setLoadedUserInfo] = useState(false)
     const [collectionValue, setCollectionValue] = useState({})
     const [requestToken, setRequestToken] = useState('')
     const [requestTokenSecret, setRequestTokenSecret] = useState('')
 
-    const { signOut } = useContext(AuthContext);
+    const { authDiscogs, signOut } = useContext(AuthContext);
 
     useEffect(() => {
-        const getToken = async () => {
-            let response = await fetch('https://api.discogs.com/oauth/request_token', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/x-www-form-urlencoded',
-                    Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}", oauth_nonce="${makeid(
-                        10
-                    )}", oauth_signature="${CONSUMER_SECRET}&", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_callback="https://auth.expo.io/@paulbremer/vinylooo", oauth_callback_confirmed="true"`
-                }
-            })
-            let data = await response.text()
-            return data
-        }
+        // console.log(authDiscogs)
+        // const getToken = async () => {
+        //     let response = await fetch('https://api.discogs.com/oauth/request_token', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-type': 'application/x-www-form-urlencoded',
+        //             Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}", oauth_nonce="${makeid(
+        //                 10
+        //             )}", oauth_signature="${CONSUMER_SECRET}&", oauth_signature_method="PLAINTEXT", oauth_timestamp="${timestamp}", oauth_callback="https://auth.expo.io/@paulbremer/vinylooo", oauth_callback_confirmed="true"`
+        //         }
+        //     })
+        //     let data = await response.text()
+        //     return data
+        // }
 
-        // 2. SEND A GET REQUEST TO THE DISCOGS REQUEST TOKEN URL
-        getToken()
-            .then((data) => {
-                console.log('2# ', data)
-                const token = data.match('oauth_token=(.*)&oauth_token_secret')[1]
-                const tokenSecret = data.match('oauth_token_secret=(.*)&oauth_callback_confirmed=true')[1]
-                setRequestToken(token)
-                setRequestTokenSecret(tokenSecret)
-            })
-            .catch((err) => console.log(err))
+        // // 2. SEND A GET REQUEST TO THE DISCOGS REQUEST TOKEN URL
+        // getToken()
+        //     .then((data) => {
+        //         console.log('2# ', data)
+        //         const token = data.match('oauth_token=(.*)&oauth_token_secret')[1]
+        //         const tokenSecret = data.match('oauth_token_secret=(.*)&oauth_callback_confirmed=true')[1]
+        //         setRequestToken(token)
+        //         setRequestTokenSecret(tokenSecret)
+        //     })
+        //     .catch((err) => console.log(err))
 
-        const fetchUserData = async () => {
-            const token = await AsyncStorage.getItem('token')
-            const secret = await AsyncStorage.getItem('secret')
-            console.log('😎 fetchUserData', token, secret)
-            if (token !== null && secret !== null) {
-                console.log('😎 user has token')
-                setRequestToken(token)
-                setRequestTokenSecret(secret)
-                getIdentity(token, secret)
-            } else {
-                getIdentity(requestToken, requestTokenSecret)
+        // const fetchUserData = async () => {
+        //     const token = await AsyncStorage.getItem('authToken')
+        //     const secret = await AsyncStorage.getItem('secret')
+        //     console.log('😎 fetchUserData', token, secret)
+        //     if (token !== null && secret !== null) {
+        //         console.log('😎 user has token')
+        //         setRequestToken(token)
+        //         setRequestTokenSecret(secret)
+        //         getIdentity(token, secret)
+        //     } else {
+        //         getIdentity(requestToken, requestTokenSecret)
+        //     }
+        // }
+        // fetchUserData()
+
+        const getUserData = async () => {
+            try {
+                const userData = await AsyncStorage.getItem('userData');
+                const userObject = JSON.parse(userData);
+                setUserInfo(userObject);
+                // getCollectionValue();
+            } catch (e) {
+                // Restoring token failed
             }
         }
-        fetchUserData()
+        getUserData();
     }, [])
 
     const handleDiscogsLogin = async () => {
@@ -168,16 +182,19 @@ const AccountScreen = () => {
         }
     }
 
-    const getCollectionValue = async (token, secret) => {
+    const getCollectionValue = async () => {
         try {
-            if (token !== null && secret !== null) {
+            const authToken = await AsyncStorage.getItem('authToken');
+            const authTokenSecret = await AsyncStorage.getItem('authTokenSecret');
+
+            if (authToken !== null && authTokenSecret !== null) {
                 fetch('https://api.discogs.com/users/paaaaaaaaaaul/collection/value', {
                     method: 'GET',
                     headers: {
                         'Content-type': 'application/x-www-form-urlencoded',
-                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${token}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
+                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${authToken}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
                             10
-                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${secret}`
+                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${authTokenSecret}`
                     }
                 })
                     .then(async (data) => {
@@ -218,7 +235,6 @@ const AccountScreen = () => {
         ),
     }
 
-
     return (
         <View
             style={{
@@ -227,35 +243,31 @@ const AccountScreen = () => {
                 backgroundColor: '#fcfcfc'
             }}
         >
-            {/* {Object.keys(userInfo).length === 0 && (
-                <TouchableOpacity onPress={handleDiscogsLogin} disabled={requestToken ? false : true}>
-                    <Text>Login with Discogs</Text>
-                </TouchableOpacity>
-            )} */}
-
             <View>
-                <>
-                    <View style={{
-                        marginBottom: 24, alignItems: 'center', padding: 24,
-                    }}>
-                        {/* <Image
+                {userInfo && Object.keys(userInfo).length > 0 && (
+                    <>
+
+                        <View style={{
+                            marginBottom: 24, alignItems: 'center', padding: 24,
+                        }}>
+                            <Image
                                 style={{ width: 150, height: 150, borderRadius: 150, marginBottom: 24 }}
                                 source={{ uri: userInfo.avatar_url }}
-                            /> */}
-                        {/* <Text style={styles.username}>{userInfo.username}</Text> */}
-                    </View>
+                            />
+                            <Text style={styles.username}>{userInfo.username}</Text>
+                        </View>
 
-                    {accountList.map(listItem => <Item key={listItem.id} title={listItem.title} itemFunction={listItem.function} />)}
+                        {accountList.map(listItem => <Item key={listItem.id} title={listItem.title} itemFunction={listItem.function} />)}
 
-                    {/* <Text>id: {userInfo.id}</Text>
-                            <Text>location: {userInfo.location}</Text>
-                            <Text>releases_rated: {userInfo.releases_rated}</Text>
-                            <Text>rating_avg: {userInfo.rating_avg}</Text>
-                            <Text>num_collection: {userInfo.num_collection}</Text>
-                            <Text>num_wantlist: {userInfo.num_wantlist}</Text>
-                            {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
-                        */}
-                </>
+                        <Text>id: {userInfo.id}</Text>
+                        <Text>location: {userInfo.location}</Text>
+                        <Text>releases_rated: {userInfo.releases_rated}</Text>
+                        <Text>rating_avg: {userInfo.rating_avg}</Text>
+                        <Text>num_collection: {userInfo.num_collection}</Text>
+                        <Text>num_wantlist: {userInfo.num_wantlist}</Text>
+                        {collectionValue.median && <Text>collection_value: {collectionValue.median}</Text>}
+                    </>
+                )}
             </View>
 
             <Text style={styles.version}>Version 0.17</Text>
