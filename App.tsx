@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useReducer, useContext } from 'react'
 import * as Font from 'expo-font'
 import * as AuthSession from 'expo-auth-session'
+import * as Sentry from 'sentry-expo';
 import ReduxThunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { Text, View, Button } from 'react-native'
@@ -35,6 +36,13 @@ require('react-native').unstable_enableLogBox()
 const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
 const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
 const timestamp = Date.now()
+
+Sentry.init({
+    dsn: "https://7626aaf6928942849606598df164dc5a@o109145.ingest.sentry.io/5556382",
+    enableInExpoDevelopment: true,
+    enableAutoSessionTracking: true,
+    debug: true,
+});
 
 init()
     .then(() => {
@@ -201,8 +209,6 @@ function ConnectScreen() {
         <View style={{ height: '100%' }}>
             <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
 
-            {/* <Button title="Sign out 2" onPress={() => Toast.show({ type: 'error', position: 'bottom', text1: 'No user found', text2: 'This is some something 👋', visibilityTime: 4000, })} /> */}
-
             <Button title="Connect Discogs account" onPress={() => authDiscogs()} />
         </View>
     );
@@ -244,10 +250,14 @@ export default function App() {
                         ...prevState,
                         requestToken: null,
                         requestTokenSecret: null,
-                        authToken: null,
-                        authTokenSecret: null,
                         userData: null,
                         isLoading: false,
+                    };
+                case 'AUTH_REFRESH_TOKENS':
+                    return {
+                        ...prevState,
+                        requestToken: action.requestToken,
+                        requestTokenSecret: action.requestTokenSecret,
                     };
                 case 'SIGN_OUT':
                     return {
@@ -300,8 +310,9 @@ export default function App() {
                 authToken = await AsyncStorage.getItem('authToken');
                 authTokenSecret = await AsyncStorage.getItem('authTokenSecret');
                 userData = await AsyncStorage.getItem('userData');
-            } catch (e) {
+            } catch (err) {
                 // Restoring token failed
+                Sentry.Native.captureException(new Error(`🚨 ${err}`));
             }
 
             if (!requestToken) {
@@ -343,7 +354,7 @@ export default function App() {
                 newToken = token
                 newTokenSecret = tokenSecret
             })
-            .catch((err) => console.log(err))
+            .catch((err) => Sentry.Native.captureException(new Error(`🚨 ${err}`)))
 
         return { newToken, newTokenSecret }
     }
@@ -374,10 +385,10 @@ export default function App() {
                             storeData('secret', '')
                         }
                     })
-                    .catch((err) => console.log(err))
+                    .catch((err) => Sentry.Native.captureException(new Error(`🚨 ${err}`)))
             }
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            Sentry.Native.captureException(new Error(`🚨 ${err}`));
         }
     }
 
@@ -402,23 +413,24 @@ export default function App() {
                         // setLoadedUserInfo(true)
                         // getCollectionValue(token, secret)
                     })
-                    .catch((err) => console.error(err))
+                    .catch((err) => Sentry.Native.captureException(new Error(`🚨 ${err}`)))
             }
-        } catch (error) {
-            console.error(error)
+        } catch (err) {
+            Sentry.Native.captureException(new Error(`🚨 ${err}`));
         }
     }
 
     const discogsAuth = async () => {
         if (!state.requestToken) {
             dispatch({ type: 'AUTH_DISCOGS_ERROR' })
-
             getDiscogsToken();
 
             Toast.show({
                 type: 'error', position: 'bottom', topOffset: 0,
                 bottomOffset: 0, text1: 'No requestToken', text2: 'This is broken, sorry 👋', visibilityTime: 4000,
             })
+
+            Sentry.Native.captureException(new Error('🚨 No requestToken'));
             return
         }
 
@@ -427,7 +439,15 @@ export default function App() {
             authUrl: `https://discogs.com/oauth/authorize?oauth_token=${state.requestToken}`
         })
 
+        console.log(results)
+
         if (results.type === 'success') {
+            if (results.params.denied) {
+                dispatch({ type: 'AUTH_DISCOGS_ERROR' })
+                const { newToken, newTokenSecret } = await getDiscogsToken();
+                dispatch({ type: 'AUTH_REFRESH_TOKENS', requestToken: newToken, requestTokenSecret: newTokenSecret });
+            }
+
             await fetch('https://api.discogs.com/oauth/access_token', {
                 method: 'POST',
                 headers: {
@@ -457,7 +477,9 @@ export default function App() {
                         dispatch({ type: 'AUTH_DISCOGS_SUCCESS', authToken: finalToken, authTokenSecret: finalTokenSecret })
                     }
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => {
+                    Sentry.Native.captureException(new Error(`🚨 ${err}`));
+                })
 
             // try {
             //     await AsyncStorage.setItem('authToken', results.params.oauth_token);
@@ -466,6 +488,8 @@ export default function App() {
             // }
         } else {
             dispatch({ type: 'AUTH_DISCOGS_ERROR' })
+            const { newToken, newTokenSecret } = await getDiscogsToken();
+            dispatch({ type: 'AUTH_REFRESH_TOKENS', requestToken: newToken, requestTokenSecret: newTokenSecret });
         }
     }
 
