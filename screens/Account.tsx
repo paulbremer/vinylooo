@@ -8,7 +8,7 @@ import { storeData, storeObject } from '../helpers/storeData'
 import Loader from '../components/Loader/Loader'
 import CustomIcon from '../components/CustomIcon/CustomIcon'
 import { AuthContext } from '../utils/authContext';
-
+import Version from '../constants/Version'
 const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
 const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
 const timestamp = Date.now()
@@ -270,7 +270,7 @@ const AccountScreen = () => {
                 )}
             </View>
 
-            <Text style={styles.version}>Version 0.17</Text>
+            <Text style={styles.version}>Version {Version.version}</Text>
         </View>
     )
 }

@@ -23,6 +23,7 @@ import ErrorNotification from './components/Notifications/ErrorNotification'
 import AddAlbum from './screens/AddAlbum'
 import AddAlbumManually from './screens/AddAlbumManually'
 import Colors from './constants/Colors'
+import Version from './constants/Version'
 import albumsReducer from './store/reducers/albums'
 import wantlistReducer from './store/reducers/wantlist'
 import { init } from './helpers/db'
@@ -208,6 +209,8 @@ function ConnectScreen() {
     return (
         <View style={{ height: '100%' }}>
             <Toast config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+
+            <Text>Version: {Version.version}</Text>
 
             <Button title="Connect Discogs account" onPress={() => authDiscogs()} />
         </View>
