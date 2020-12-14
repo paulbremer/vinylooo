@@ -1850,7 +1850,7 @@
     "@sentry/types" "5.29.0"
     tslib "^1.9.3"
 
-"@sentry/react-native@2.1.0", "@sentry/react-native@^2.1.0":
+"@sentry/react-native@2.1.0":
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@sentry/react-native/-/react-native-2.1.0.tgz#8d9640fbad37555008c284ab82fa82a3e6f7aa5c"
   integrity sha512-2sSXYiqZzNJ6z9V556UjZaG1kDAKQAMCySxXg69DLU60G+H5YbGM3HDykypO5DXZWqrMsP5q0WOSHZAb8KkHWQ==
@@ -8223,7 +8223,7 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-sentry-expo@^3.0.4:
+sentry-expo@3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/sentry-expo/-/sentry-expo-3.0.4.tgz#0c215094281e6a852eeba5062d424f990a5e9e4f"
   integrity sha512-hyUYYrDBSGx21hffFBisBYo9rXOYAPzRIlk6l9y9Wt0+LOLkV+I2sfjNCjmsoPC6wMkG7aBrxMIE+zvvoHjC1A==
