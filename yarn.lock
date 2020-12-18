@@ -7680,10 +7680,10 @@ react-native-testing-library@2.2.0:
   dependencies:
     pretty-format "^26.0.1"
 
-react-native-toast-message@1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-1.4.1.tgz#8be7b91d8a5405e86179f83e52e56de58bbce25f"
-  integrity sha512-3EcI2NCp+oMynAjDJ6eNZ44oiitlEHccQftdRAFOOKGk6H7mgTTDw299h+dWmpLnMZkfqBn/JtC75ozNleinzQ==
+react-native-toast-message@1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-toast-message/-/react-native-toast-message-1.4.2.tgz#bda453dd7259587f2c5b3a1684ee5461569fe191"
+  integrity sha512-Hp/APBQu/TCLlnMhwhqaosWiC/HgpVYXG2WGF2Zd2GF93nOcH516BUoDC0rvbncGx11IBUrUtt14RRm6LrcL6g==
   dependencies:
     eslint-plugin-prettier "^3.2.0"
     prop-types "^15.7.2"
