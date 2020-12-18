@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, Image, ScrollView, Dimensions, StyleSheet } from 'react-native'
+import { Button, Linking, View, Text, Image, ScrollView, Dimensions, StyleSheet } from 'react-native'
 import Loader from '../components/Loader/Loader'
 import Tracklist from '../components/Tracklist/Tracklist'
 
@@ -7,20 +7,44 @@ const screenWidth = Math.round(Dimensions.get('window').width)
 
 const AlbumDetail = ({ route }) => {
     const { id: discogsId } = route.params.album
+
     if (!discogsId) {
         console.log('🚨 no discogs id')
-        return (
-            <View>
-                <Text>No ID</Text>
-            </View>
-        )
+        return (<View><Text>No ID</Text></View>)
     }
+
     const [albumDetail, setAlbumDetail] = useState({})
     const [loading, setLoading] = useState(true)
+    const [spotifyUrl, setSpotifyUrl] = useState()
 
     useEffect(() => {
         fetchAlbumDetails()
     }, [])
+
+    const fetchSpotifyLink = async (artist, album) => {
+        const myHeaders = new Headers();
+        myHeaders.append("Accept", "application/json");
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer BQC4jdwG3G41_ie0ZROOB5VsThMN9EtfzB033N_E6pWxRQISX2HkYYvUETT-_mr_bHRWyKe2N2py5NSdgD67HDJcUK2kLxStJqS4GlhAayHgExxQI0yEyieOuiGdPQ7-DKC04ZbfGHwuJPM");
+
+        const response = await fetch(
+            `https://api.spotify.com/v1/search?q=album:${encodeURIComponent(album)}%20artist:${encodeURIComponent(artist)}&type=album&limit=1`, {
+            method: 'GET',
+            headers: myHeaders,
+            redirect: 'follow'
+        })
+
+        if (!response.ok) {
+            const message = `An error has occured: ${response.status}`;
+            throw new Error(message);
+        }
+
+        const spotifyData = await response.json();
+        const { name, uri } = spotifyData.albums.items[0];
+        console.log('name', name)
+        console.log('uri', uri)
+        return uri;
+    }
 
     const fetchAlbumDetails = () => {
         fetch(
@@ -32,8 +56,12 @@ const AlbumDetail = ({ route }) => {
                     return
                 }
 
-                response.json().then((data) => {
+                response.json().then(async (data) => {
                     setAlbumDetail(data)
+                    if (data.artists.length > 0) {
+                        const url = await fetchSpotifyLink(data.artists[0].name, data.title)
+                        setSpotifyUrl(url)
+                    }
                 })
                 setLoading(false)
             })
@@ -84,6 +112,11 @@ const AlbumDetail = ({ route }) => {
                         </View>
                     </>
                 )}
+
+                {spotifyUrl && <Button
+                    title={`Open ${spotifyUrl}`}
+                    onPress={() => Linking.openURL(spotifyUrl)}
+                />}
 
                 {albumDetail.tracklist && <Tracklist tracklist={albumDetail.tracklist} />}
             </View>
