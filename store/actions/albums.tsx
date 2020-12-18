@@ -1,5 +1,6 @@
-import { AsyncStorage } from 'react-native'
-import { insertAlbum, insertAlbumToWantlist, removeAlbumFromDatabase, fetchAlbums } from '../../helpers/db'
+import AsyncStorage from '@react-native-community/async-storage'
+import * as Sentry from 'sentry-expo';
+import { removeAlbumFromDatabase } from '../../helpers/db'
 
 export const ADD_ALBUM = 'ADD_ALBUM'
 export const SET_ALBUMS = 'SET_ALBUMS'
@@ -28,17 +29,18 @@ export const addAlbum = (album) => {
         const albumArtist = albumArtistRegex[0].trim()
         const albumTitle = albumTitleRegex[1].trim()
         const timestamp = new Date().toString()
-        let dbResult
 
         try {
             const token = await AsyncStorage.getItem('token')
             const secret = await AsyncStorage.getItem('secret')
+            const userData = await AsyncStorage.getItem('userData')
+            const userObject = JSON.parse(userData);
 
             if (token !== null && secret !== null) {
                 console.log('🐛 ', token, secret)
 
                 const res = await fetch(
-                    `https://api.discogs.com/users/paaaaaaaaaaul/collection/folders/1/releases/${id}`,
+                    `https://api.discogs.com/users/${userObject.username}/collection/folders/1/releases/${id}`,
                     {
                         method: 'POST',
                         headers: {
@@ -73,10 +75,12 @@ export const removeAlbum = (albumId, instanceId) => {
     return async (dispatch) => {
         const token = await AsyncStorage.getItem('token')
         const secret = await AsyncStorage.getItem('secret')
+        const userData = await AsyncStorage.getItem('userData')
+        const userObject = JSON.parse(userData);
 
         if (token !== null && secret !== null) {
             await fetch(
-                `https://api.discogs.com/users/paaaaaaaaaaul/collection/folders/1/releases/${albumId}/instances/${instanceId}`,
+                `https://api.discogs.com/users/${userObject.username}/collection/folders/1/releases/${albumId}/instances/${instanceId}`,
                 {
                     method: 'DELETE',
                     headers: {
@@ -105,10 +109,12 @@ export const setAlbums = () => {
     return async (dispatch) => {
         const token = await AsyncStorage.getItem('token')
         const secret = await AsyncStorage.getItem('secret')
+        const userData = await AsyncStorage.getItem('userData')
+        const userObject = JSON.parse(userData);
 
         if (token !== null && secret !== null) {
             const res = await fetch(
-                'https://api.discogs.com/users/paaaaaaaaaaul/collection/folders/0/releases?sort=added&sort_order=desc',
+                `https://api.discogs.com/users/${userObject.username}/collection/folders/0/releases?sort=added&sort_order=desc`,
                 {
                     method: 'GET',
                     headers: {
@@ -118,14 +124,10 @@ export const setAlbums = () => {
                 }
             )
             const json = await res.json()
+            console.log('json', json)
             dispatch({ type: SET_ALBUMS, payload: json.releases })
         } else {
-            try {
-                const dbResult = await fetchAlbums()
-                dispatch({ type: SET_ALBUMS, wantlist: dbResult.rows._array })
-            } catch (err) {
-                throw err
-            }
+            Sentry.Native.captureException(new Error(`🚨 setAlbums action is not working. Token: ${token}. Secret: ${secret}`));
         }
     }
 }

@@ -10,13 +10,16 @@ export default (state = initialState, action) => {
     switch (action.type) {
         case SET_WANTLIST:
             let setSortedWantlist = action.payload
-            if (state.sorting === 'date') {
-                setSortedWantlist = action.payload.sort((a, b) => b.date_added.localeCompare(a.date_added))
+            if (setSortedWantlist && state.sorting === 'date') {
+                setSortedWantlist = setSortedWantlist.sort((a, b) => b.date_added.localeCompare(a.date_added))
+                return {
+                    ...state,
+                    albums: setSortedWantlist
+                }
+            } else {
+                return { ...state }
             }
-            return {
-                ...state,
-                albums: setSortedWantlist
-            }
+
         case ADD_ALBUM_TO_WANTLIST:
             const newAlbum = [
                 {

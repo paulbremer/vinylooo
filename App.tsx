@@ -380,7 +380,7 @@ export default function App() {
                         let json = await data.json()
                         if (json.username) {
                             storeData('username', json.username)
-                            getUserInfo(token, secret)
+                            getUserInfo(token, secret, json.username)
                         } else {
                             console.log('heb geen username dus')
                             Toast.show({ type: 'error', text1: 'No user found', text2: 'This is some something 👋', visibilityTime: 4000, })
@@ -395,11 +395,11 @@ export default function App() {
         }
     }
 
-    const getUserInfo = async (token, secret) => {
+    const getUserInfo = async (token, secret, username) => {
         console.log('getUserInfo', token, secret)
         try {
             if (token !== null && secret !== null) {
-                fetch('https://api.discogs.com/users/paaaaaaaaaaul', {
+                fetch(`https://api.discogs.com/users/${username}`, {
                     method: 'GET',
                     headers: {
                         'Content-type': 'application/x-www-form-urlencoded',
@@ -410,7 +410,7 @@ export default function App() {
                 })
                     .then(async (data) => {
                         let json = await data.json()
-                        console.log('💪🏼 ', json.username)
+                        console.log('💪🏼 ', json)
                         storeObject('userData', json)
                         // setUserInfo({ ...json, ...userInfo })
                         // setLoadedUserInfo(true)
@@ -483,12 +483,6 @@ export default function App() {
                 .catch((err) => {
                     Sentry.Native.captureException(new Error(`🚨 ${err}`));
                 })
-
-            // try {
-            //     await AsyncStorage.setItem('authToken', results.params.oauth_token);
-            // } catch (e) {
-            //     // Setting token failed
-            // }
         } else {
             dispatch({ type: 'AUTH_DISCOGS_ERROR' })
             const { newToken, newTokenSecret } = await getDiscogsToken();

@@ -12,12 +12,14 @@ export default (state = initialState, action) => {
     switch (action.type) {
         case SET_ALBUMS:
             let setSortedAlbums = action.payload
-            if (state.sorting === 'date') {
-                setSortedAlbums = action.payload.sort((a, b) => b.date_added.localeCompare(a.date_added))
-            }
-            return {
-                ...state,
-                albums: setSortedAlbums
+            if (setSortedAlbums && state.sorting === 'date') {
+                setSortedAlbums = setSortedAlbums.sort((a, b) => b.date_added.localeCompare(a.date_added))
+                return {
+                    ...state,
+                    albums: setSortedAlbums
+                }
+            } else {
+                return { ...state }
             }
         case ADD_ALBUM:
             const newAlbum = [

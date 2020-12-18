@@ -138,7 +138,7 @@ const AccountScreen = () => {
                         console.log('🔥 ', json)
                         if (json.username) {
                             storeData('username', json.username)
-                            getUserInfo(token, secret)
+                            getUserInfo(token, secret, json.username)
                         } else {
                             console.log('heb geen username dus')
                             Toast.show({ type: 'error', text1: 'No user found', text2: 'This is some something 👋', visibilityTime: 4000, })
@@ -154,11 +154,11 @@ const AccountScreen = () => {
         }
     }
 
-    const getUserInfo = async (token, secret) => {
+    const getUserInfo = async (token, secret, username) => {
         console.log('getUserInfo', token, secret)
         try {
             if (token !== null && secret !== null) {
-                fetch('https://api.discogs.com/users/paaaaaaaaaaul', {
+                fetch(`https://api.discogs.com/users/${username}`, {
                     method: 'GET',
                     headers: {
                         'Content-type': 'application/x-www-form-urlencoded',
@@ -173,7 +173,7 @@ const AccountScreen = () => {
                         storeObject('userData', json)
                         setUserInfo({ ...json, ...userInfo })
                         setLoadedUserInfo(true)
-                        getCollectionValue(token, secret)
+                        getCollectionValue(token, secret, json.username)
                     })
                     .catch((err) => console.error(err))
             }
@@ -182,19 +182,16 @@ const AccountScreen = () => {
         }
     }
 
-    const getCollectionValue = async () => {
+    const getCollectionValue = async (token, secret, username) => {
         try {
-            const authToken = await AsyncStorage.getItem('authToken');
-            const authTokenSecret = await AsyncStorage.getItem('authTokenSecret');
-
-            if (authToken !== null && authTokenSecret !== null) {
-                fetch('https://api.discogs.com/users/paaaaaaaaaaul/collection/value', {
+            if (token !== null && secret !== null) {
+                fetch(`https://api.discogs.com/users/${username}/collection/value`, {
                     method: 'GET',
                     headers: {
                         'Content-type': 'application/x-www-form-urlencoded',
-                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${authToken}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
+                        Authorization: `OAuth oauth_consumer_key="${CONSUMER_KEY}",oauth_token="${token}", oauth_signature_method="PLAINTEXT",oauth_timestamp="${timestamp}", oauth_nonce="${makeid(
                             10
-                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${authTokenSecret}`
+                        )}", oauth_version="1.0", oauth_signature="${CONSUMER_SECRET}%26${secret}`
                     }
                 })
                     .then(async (data) => {
