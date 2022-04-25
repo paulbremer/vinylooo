@@ -12,10 +12,11 @@ import * as wantlistAction from '../store/actions/wantlist'
 const AddAlbum = ({ route, navigation }) => {
     const [hasPermission, setHasPermission] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [barcode, setBarcode] = useState(null)
     const dispatch = useDispatch()
     // const from = route.params.from
 
-    console.log(route);
+    // console.log(route);
 
     useEffect(() => {
         ;(async () => {
@@ -24,7 +25,14 @@ const AddAlbum = ({ route, navigation }) => {
         })()
     }, [])
 
+    useEffect(() => {
+        console.log('barcode changed! ', barcode)
+        fetchAlbumData(barcode)
+    }, [barcode])
+
     const AddAlbumToCollection = (album) => {
+        dispatch(albumsAction.addAlbum(album))
+        navigation.goBack()
         // if (from === 'collection') {
         //     dispatch(albumsAction.addAlbum(album))
         //     navigation.navigate('Collection')
@@ -35,33 +43,42 @@ const AddAlbum = ({ route, navigation }) => {
     }
 
     const onBarCodeScanned = (barCode) => {
-        console.log('onBarCodeScanned', barCode.data)
+        setBarcode(barCode.data)
+    }
+    
+    const fetchAlbumData = async (barcode) => {
+        console.log('fetchAlbumData', barcode)
+        if (!barcode) return
         setLoading(true)
+        const response = await fetch(`https://api.discogs.com/database/search?barcode=${barcode}&type=release&format=vinyl&key=tILfDjLHXNBVjcVQthxa&secret=KIIXTQskHkIifimxKtedzTKnBSNigSZL`)
 
-        fetch(
-            `https://api.discogs.com/database/search?barcode=${barCode.data}&type=release&format=vinyl&key=tILfDjLHXNBVjcVQthxa&secret=KIIXTQskHkIifimxKtedzTKnBSNigSZL`
-        )
-            .then((response) => {
-                if (response.status !== 200) {
-                    console.log(`Status Code: ${response.status}`)
-                    return
-                }
+        if (!response.ok) {
+            const message = `An error has occured: ${response.status}`;
+            throw new Error(message);
+        }
 
-                response.json().then((data) => {
-                    AddAlbumToCollection(data.results[0])
-                })
-            })
-            .catch((err) => {
-                console.log('Fetch Error', err)
-            })
+        if (response.status !== 200) {
+            console.log(`Status Code: ${response.status}`)
+            return
+        }
+
+        const searchResults = await response.json()
+
+        console.log(searchResults.results[0])
+
+        AddAlbumToCollection(searchResults.results[0])
+
+        setTimeout(() => {
+            setLoading(false)
+        }, 2000);
     }
 
-    // if (hasPermission === null) {
-    //     return <View />
-    // }
-    // if (hasPermission === false) {
-    //     return <Text>No access to camera</Text>
-    // }
+    if (hasPermission === null) {
+        return <View />
+    }
+    if (hasPermission === false) {
+        return <Text>No access to camera</Text>
+    }
 
     return (
         <SafeAreaView style={styles.screen}>
