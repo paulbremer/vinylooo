@@ -36,7 +36,7 @@
     "react-native-svg-icon": "0.9.0",
     "react-native-swipe-list-view": "3.2.6",
     "react-native-testing-library": "2.2.0",
-    "react-native-toast-message": "1.4.3",
+    "react-native-toast-message": "1.6.0",
     "react-native-vector-icons": "7.1.0",
     "react-native-web": "0.17.1",
     "react-redux": "7.2.2",
