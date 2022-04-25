@@ -13,7 +13,7 @@ const AddAlbumManually = ({ route, navigation }) => {
     const [results, setResults] = useState([])
     const debouncedSearchTerm = useDebounce(searchTerm, 1000)
     const dispatch = useDispatch()
-    const from = route.params.from
+    // const from = route.params.from
 
     useEffect(() => {
         if (debouncedSearchTerm.length > 2) {
@@ -38,13 +38,13 @@ const AddAlbumManually = ({ route, navigation }) => {
     }
 
     const AddAlbumToCollection = (album) => {
-        if (from === 'collection') {
-            dispatch(albumsAction.addAlbum(album))
-            navigation.navigate('Collection')
-        } else {
-            dispatch(wantlistAction.addAlbum(album))
-            navigation.navigate('Wantlist')
-        }
+        // if (from === 'collection') {
+        //     dispatch(albumsAction.addAlbum(album))
+        //     navigation.navigate('Collection')
+        // } else {
+        //     dispatch(wantlistAction.addAlbum(album))
+        //     navigation.navigate('Wantlist')
+        // }
     }
 
     return (

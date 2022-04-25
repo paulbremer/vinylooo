@@ -59,9 +59,8 @@ const CollectionStackScreen = ({ navigation }) => {
                             color={Colors.purple}
                             style={{ marginRight: 24 }}
                             onPress={() =>
-                                navigation.navigate('Main', {
-                                    screen: 'addAlbumModal',
-                                    // params: { from: 'collection' }
+                                navigation.navigate('addAlbumModal', {
+                                    params: { from: 'collection' }
                                 })
                             }
                         />

@@ -13,23 +13,25 @@ const AddAlbum = ({ route, navigation }) => {
     const [hasPermission, setHasPermission] = useState(null)
     const [loading, setLoading] = useState(false)
     const dispatch = useDispatch()
-    const from = route.params.from
+    // const from = route.params.from
+
+    console.log(route);
 
     useEffect(() => {
         ;(async () => {
-            const { status } = await Camera.requestPermissionsAsync()
+            const { status } = await Camera.requestCameraPermissionsAsync()
             setHasPermission(status === 'granted')
         })()
     }, [])
 
     const AddAlbumToCollection = (album) => {
-        if (from === 'collection') {
-            dispatch(albumsAction.addAlbum(album))
-            navigation.navigate('Collection')
-        } else {
-            dispatch(wantlistAction.addAlbum(album))
-            navigation.navigate('Wantlist')
-        }
+        // if (from === 'collection') {
+        //     dispatch(albumsAction.addAlbum(album))
+        //     navigation.navigate('Collection')
+        // } else {
+        //     dispatch(wantlistAction.addAlbum(album))
+        //     navigation.navigate('Wantlist')
+        // }
     }
 
     const onBarCodeScanned = (barCode) => {
@@ -54,12 +56,12 @@ const AddAlbum = ({ route, navigation }) => {
             })
     }
 
-    if (hasPermission === null) {
-        return <View />
-    }
-    if (hasPermission === false) {
-        return <Text>No access to camera</Text>
-    }
+    // if (hasPermission === null) {
+    //     return <View />
+    // }
+    // if (hasPermission === false) {
+    //     return <Text>No access to camera</Text>
+    // }
 
     return (
         <SafeAreaView style={styles.screen}>
@@ -82,7 +84,7 @@ const AddAlbum = ({ route, navigation }) => {
                     </View>
                 </Camera>
                 <View>
-                    <TouchableOpacity onPress={() => navigation.navigate('AddAlbumManually', { from })}>
+                    <TouchableOpacity onPress={() => navigation.navigate('AddAlbumManually')}>
                         <View
                             style={{
                                 flexDirection: 'row',

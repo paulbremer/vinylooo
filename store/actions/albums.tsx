@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as Sentry from 'sentry-expo';
 import { removeAlbumFromDatabase } from '../../helpers/db'
 
@@ -124,7 +124,6 @@ export const setAlbums = () => {
                 }
             )
             const json = await res.json()
-            console.log('json', json)
             dispatch({ type: SET_ALBUMS, payload: json.releases })
         } else {
             Sentry.Native.captureException(new Error(`🚨 setAlbums action is not working. Token: ${token}. Secret: ${secret}`));

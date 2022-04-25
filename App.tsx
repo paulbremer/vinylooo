@@ -5,7 +5,7 @@ import * as Sentry from 'sentry-expo';
 import ReduxThunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { Text, View, Button } from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Toast from 'react-native-toast-message'
 import { AppearanceProvider } from 'react-native-appearance'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
@@ -31,8 +31,6 @@ import { getData, storeData, removeData, storeObject } from './helpers/storeData
 import makeid from './helpers/nonce'
 
 import { AuthContext } from './utils/authContext';
-
-require('react-native').unstable_enableLogBox()
 
 const CONSUMER_KEY = 'tILfDjLHXNBVjcVQthxa'
 const CONSUMER_SECRET = 'KIIXTQskHkIifimxKtedzTKnBSNigSZL'
@@ -137,11 +135,11 @@ const ScanAlbumScreen = () => {
                             name="close"
                             color="#ffffff"
                             style={{ marginRight: 24 }}
-                            onPress={() =>
-                                route.params.from === 'collection'
-                                    ? navigation.navigate('Collection')
-                                    : navigation.navigate('Wantlist')
-                            }
+                            // onPress={() =>
+                            //     route.params.from === 'collection'
+                            //         ? navigation.navigate('Collection')
+                            //         : navigation.navigate('Wantlist')
+                            // }
                         />
                     )
                 })}
@@ -150,44 +148,50 @@ const ScanAlbumScreen = () => {
     )
 }
 
+const MainStackTabNavigtor = () => {
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName
+
+                    if (route.name === 'FEED') {
+                        iconName = 'sort'
+                    } else if (route.name === 'COLLECTION') {
+                        iconName = 'lp'
+                    } else if (route.name === 'WANTLIST') {
+                        iconName = 'discover'
+                    } else if (route.name === 'ACCOUNT') {
+                        iconName = 'user'
+                    }
+
+                    return <CustomIcon name={iconName} color={focused ? Colors.primaryColor : Colors.grey} />
+                }
+            })}
+            tabBarOptions={{
+                activeTintColor: Colors.primaryColor,
+                inactiveTintColor: '#8D819D'
+            }}
+        >
+            <Tab.Screen name="FEED" component={FeedStackScreen} />
+            <Tab.Screen name="COLLECTION" component={CollectionStackScreen} />
+            <Tab.Screen name="WANTLIST" component={WantlistStackScreen} />
+            <Tab.Screen name="ACCOUNT" component={AccountStackScreen} />
+        </Tab.Navigator>
+    )
+}
+
 const MainStackScreen = () => {
     return (
-        <>
-            <Tab.Navigator
-                screenOptions={({ route }) => ({
-                    tabBarIcon: ({ focused, color, size }) => {
-                        let iconName
-
-                        if (route.name === 'FEED') {
-                            iconName = 'sort'
-                        } else if (route.name === 'COLLECTION') {
-                            iconName = 'lp'
-                        } else if (route.name === 'WANTLIST') {
-                            iconName = 'discover'
-                        } else if (route.name === 'ACCOUNT') {
-                            iconName = 'user'
-                        }
-
-                        return <CustomIcon name={iconName} color={focused ? Colors.primaryColor : Colors.grey} />
-                    }
-                })}
-                tabBarOptions={{
-                    activeTintColor: Colors.primaryColor,
-                    inactiveTintColor: '#8D819D'
-                }}
-            >
-                <Tab.Screen name="FEED" component={FeedStackScreen} />
-                <Tab.Screen name="COLLECTION" component={CollectionStackScreen} />
-                <Tab.Screen name="WANTLIST" component={WantlistStackScreen} />
-                <Tab.Screen name="ACCOUNT" component={AccountStackScreen} />
-            </Tab.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Main" component={MainStackTabNavigtor} />
 
             <Stack.Screen
                 name="addAlbumModal"
                 component={ScanAlbumScreen}
                 options={{ headerShown: false }}
             />
-        </>
+        </Stack.Navigator>
     )
 }
 
@@ -441,8 +445,6 @@ export default function App() {
         let results = await AuthSession.startAsync({
             authUrl: `https://discogs.com/oauth/authorize?oauth_token=${state.requestToken}`
         })
-
-        console.log(results)
 
         if (results.type === 'success') {
             if (results.params.denied) {
