@@ -30,9 +30,6 @@
     "description": "",
     "android": {
       "package": "com.paulbremer.vinylooo"
-    },
-    "experiments": {
-      "redesignedLogBox": true
     }
   }
 }
