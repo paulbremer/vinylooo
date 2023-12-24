@@ -41,7 +41,7 @@
     "react-native-testing-library": "2.2.0",
     "react-native-toast-message": "1.4.3",
     "react-native-vector-icons": "7.1.0",
-    "react-native-web": "0.17.1",
+    "react-native-web": "0.19.10",
     "react-redux": "7.2.2",
     "react-spring": "8.0.27",
     "redux": "4.0.5",
