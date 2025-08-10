@@ -7644,9 +7644,10 @@ react-native-iphone-x-helper@^1.3.0:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
   integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
 
-"react-native-material-textfield@https://github.com/TheLartians/react-native-material-textfield.git#2ff158f2b13929dfb48c9db6d884d9421b847265":
+"react-native-material-textfield@https://github.com/TheLartians/react-native-material-textfield.git#147f3b92b24cb3404c3b4a0229b3da30b81e2c7e":
   version "0.16.1"
-  resolved "https://github.com/TheLartians/react-native-material-textfield.git#2ff158f2b13929dfb48c9db6d884d9421b847265"
+  uid "147f3b92b24cb3404c3b4a0229b3da30b81e2c7e"
+  resolved "https://github.com/TheLartians/react-native-material-textfield.git#147f3b92b24cb3404c3b4a0229b3da30b81e2c7e"
   dependencies:
     prop-types "^15.5.9"
 

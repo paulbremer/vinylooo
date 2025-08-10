@@ -31,7 +31,7 @@
     "react-native": "0.64.3",
     "react-native-appearance": "~0.3.3",
     "react-native-gesture-handler": "~2.1.0",
-    "react-native-material-textfield": "https://github.com/TheLartians/react-native-material-textfield.git#2ff158f2b13929dfb48c9db6d884d9421b847265",
+    "react-native-material-textfield": "https://github.com/TheLartians/react-native-material-textfield.git#147f3b92b24cb3404c3b4a0229b3da30b81e2c7e",
     "react-native-reanimated": "~2.3.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
